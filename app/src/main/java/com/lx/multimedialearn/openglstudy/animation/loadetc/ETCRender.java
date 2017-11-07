@@ -8,7 +8,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * 加载PKM渲染动画的渲染器
- *
+ * 1. 解析zip
+ * 2. 加载，渲染，使用定时器
  * @author lixiao
  * @since 2017-11-06 23:53
  */
