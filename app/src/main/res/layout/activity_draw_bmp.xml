@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.lx.multimedialearn.drawbmp.DrawBmpActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="1.使用ImageView画Bitmap" />
+
+        <ImageView
+            android:id="@+id/img_draw_bmp_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="2.使用SurfaceView画Bitmap" />
+
+        <SurfaceView
+            android:id="@+id/surface_draw_bmp_surfaceview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="3.使用自定义View画Bitmap" />
+
+        <com.lx.multimedialearn.drawbmp.CustomBmpView
+            android:id="@+id/custom_draw_bmp_customview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="4.使用GLSurfaceView画Bitmap" />
+
+        <android.opengl.GLSurfaceView
+            android:id="@+id/glsurface_draw_bmp_glsurfaceview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="5.使用GLSurfaceView画stl模型" />
+        
+        <android.opengl.GLSurfaceView
+            android:id="@+id/glsurface_draw_stl_glsurfaceview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+        
+        <SeekBar
+            android:id="@+id/seekbar_draw_bmp_stl_scale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="6.使用TextureView画Bitmap" />
+
+        <TextureView
+            android:id="@+id/textureview_draw_bmp_textureview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+
+
+        <!--<com.lx.multimedialearn.drawbmp.DoubleBufferView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="500dp" />-->
+    </LinearLayout>
+</ScrollView>
