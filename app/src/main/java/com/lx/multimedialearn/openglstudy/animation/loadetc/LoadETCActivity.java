@@ -22,6 +22,8 @@ public class LoadETCActivity extends AppCompatActivity {
         setContentView(R.layout.activity_load_etc);
         mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_etc_show);
         mGLSurfaceView.setEGLContextClientVersion(2);
-        mGLSurfaceView.setRenderer(new ETCRender(this));
+        mGLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        mGLSurfaceView.setRenderer(new ETCRender(mGLSurfaceView, this));
+        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
 }
