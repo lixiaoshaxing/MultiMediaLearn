@@ -3,6 +3,7 @@ package com.lx.multimedialearn.openglstudy.animation.loadetc;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.lx.multimedialearn.R;
 
@@ -15,6 +16,7 @@ import com.lx.multimedialearn.R;
 public class LoadETCActivity extends AppCompatActivity {
 
     private GLSurfaceView mGLSurfaceView;
+    private ETCRender mRender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +25,14 @@ public class LoadETCActivity extends AppCompatActivity {
         mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_etc_show);
         mGLSurfaceView.setEGLContextClientVersion(2);
         mGLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        mGLSurfaceView.setRenderer(new ETCRender(mGLSurfaceView, this));
+        mRender = new ETCRender(this, mGLSurfaceView);
+        mGLSurfaceView.setRenderer(mRender);
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        mGLSurfaceView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRender.replay();
+            }
+        });
     }
 }

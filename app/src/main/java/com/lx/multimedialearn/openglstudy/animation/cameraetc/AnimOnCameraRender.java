@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.openglstudy.animation.loadetc;
+package com.lx.multimedialearn.openglstudy.animation.cameraetc;
 
 import android.content.Context;
 import android.opengl.ETC1;
@@ -7,6 +7,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 
 import com.lx.multimedialearn.R;
+import com.lx.multimedialearn.openglstudy.animation.loadetc.ZipPkmReader;
 import com.lx.multimedialearn.utils.FileUtils;
 import com.lx.multimedialearn.utils.GlUtil;
 import com.lx.multimedialearn.utils.MatrixUtils;
@@ -19,22 +20,20 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * 加载PKM渲染动画的渲染器
- * 1. 解析zip
- * 2. 加载，渲染，使用定时器
- * 这个矩阵变换不明白，暂时放放，应该就是渲染一帧一帧的图片
+ * 在相机预览界面展示动画
+ * 相当于把相机的预览界面和动画界面合成
  *
  * @author lixiao
- * @since 2017-11-06 23:53
+ * @since 2017-11-09 21:52
  */
-public class ETCRender implements GLSurfaceView.Renderer {
+public class AnimOnCameraRender implements GLSurfaceView.Renderer {
     private Context mContext;
     private GLSurfaceView mGLSurfaceView;
     private long time;
     private long timeStep = 50;
     private ZipPkmReader mPkmReader;
 
-    public ETCRender(Context context, GLSurfaceView surfaceView) {
+    public AnimOnCameraRender(Context context, GLSurfaceView surfaceView) {
         this.mContext = context;
         this.mGLSurfaceView = surfaceView;
         mPkmReader = new ZipPkmReader(context.getResources().getAssets());
