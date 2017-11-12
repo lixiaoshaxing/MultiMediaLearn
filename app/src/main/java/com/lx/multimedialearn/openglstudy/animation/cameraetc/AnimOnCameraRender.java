@@ -89,9 +89,9 @@ public class AnimOnCameraRender implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-        String vertexString = FileUtils.readTextFileFromResource(mContext, R.raw.etc_vertex_shader);
-        String fragmentString = FileUtils.readTextFileFromResource(mContext, R.raw.etc_fragment_shader);
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        String vertexString = FileUtils.readTextFileFromResource(mContext, R.raw.etc_camera_vertex_shader);
+        String fragmentString = FileUtils.readTextFileFromResource(mContext, R.raw.etc_camera_fragment_shader);
         mProgram = GlUtil.createProgram(vertexString, fragmentString);
         texture = new int[2];
         createEtcTexture(texture);

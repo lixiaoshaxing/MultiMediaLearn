@@ -8,6 +8,8 @@ import com.lx.multimedialearn.R;
 
 /**
  * 加载了动画，并结合相机使用
+ * 1. 初始化 相机预览
+ * 2. 结合相机预览界面和动画的界面
  */
 public class AnimOnCameraActivity extends AppCompatActivity {
     private GLSurfaceView mGLSurfaceView;
@@ -24,5 +26,15 @@ public class AnimOnCameraActivity extends AppCompatActivity {
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGLSurfaceView.onResume();
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mGLSurfaceView.onPause();
+    }
 }

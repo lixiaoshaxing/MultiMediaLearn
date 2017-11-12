@@ -48,12 +48,12 @@ public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
 
         /************************以下初始化两个GL，共用一个SurfaceTexture**************************************/
         mGLOne.setEGLContextClientVersion(2);
-        mRenderOne = new CameraRender(mSurfaceTexture, createTextureID());
+        mRenderOne = new CameraRender(this, mSurfaceTexture, createTextureID());
         mGLOne.setRenderer(mRenderOne);
         mGLOne.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置刷新模式
 
         mGLTwo.setEGLContextClientVersion(2);
-        mRenderTwo = new CameraRender(mSurfaceTexture, createTextureID());
+        mRenderTwo = new CameraRender(this, mSurfaceTexture, createTextureID());
         mGLTwo.setRenderer(mRenderTwo);
         mGLTwo.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY); //设置刷新模式
 
