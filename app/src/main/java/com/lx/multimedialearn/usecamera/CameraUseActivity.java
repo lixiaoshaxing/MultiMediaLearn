@@ -121,10 +121,10 @@ public class CameraUseActivity extends AppCompatActivity implements View.OnClick
      * GLSurfaceView展示后需要设置Render等其它参数，这里先绑定
      */
     private void initGLSurfaceView() {
+        mGlSurfaceView.setEGLContextClientVersion(2);
         mSurfaceTexture = new SurfaceTexture(GlUtil.createTextureID());//（1)创建SurfaceTexture获取Camera数据，并标定一个id
         mSurfaceTexture.detachFromGLContext(); //创建SurfaceTexture后必须立刻detach OpenGL的上下文，在CameraRender中的onDrawFrame前再进行关联，这样能够共享这个SurfaceTexture
-        mGlSurfaceView.setEGLContextClientVersion(2);
-        mRender = new CameraRender(mSurfaceTexture, GlUtil.createTextureID());//绑定id，startPreviewOnGlSurfaceView()时进行预览，向SurfaceTexture中填充数据
+        mRender = new CameraRender(this, mSurfaceTexture, GlUtil.createTextureID());//绑定id，startPreviewOnGlSurfaceView()时进行预览，向SurfaceTexture中填充数据
         mGlSurfaceView.setRenderer(mRender);//(2)把数据提供给Render，使用Render在SurfaceView上绘画预览图像
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY); //可以使用dirty进行手动触发更新界面
     }
