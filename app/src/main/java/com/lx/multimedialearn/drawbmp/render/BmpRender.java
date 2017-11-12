@@ -9,9 +9,8 @@ import android.opengl.GLUtils;
 import android.opengl.Matrix;
 
 import com.lx.multimedialearn.R;
+import com.lx.multimedialearn.utils.GlUtil;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
@@ -45,7 +44,7 @@ public class BmpRender implements GLSurfaceView.Renderer {
                     "}";
 
     //画长方形，四个坐标点, 所有的顶点，顶点链接后形成fragment，fragment通过光栅化映射为屏幕上像素的点
-    private static final float[] VERTEX = {  //以屏幕中心为原点，屏幕宽高比不是1，所以需要使用矩阵乘法进行转换
+    private static final float[] vertex = {  //以屏幕中心为原点，屏幕宽高比不是1，所以需要使用矩阵乘法进行转换
             1, 1, 0,  //top right  //逆时针方向
             -1f, 1, 0, //top left
             -1, -1, 0,   //bottom left
@@ -54,12 +53,12 @@ public class BmpRender implements GLSurfaceView.Renderer {
     };
 
     //画三角形的顺序，画出来两个三角形构建矩形
-    private static final short[] VERTEX_INDEX = {0, 1, 2, 0, 2, 3};
+    private static final short[] vertex_index = {0, 1, 2, 0, 2, 3};
 
     /**
      * 截取纹理的一部分绘制到图形上
      */
-    private static final float[] TEX_VERTEX = {
+    private static final float[] coord_vertex = {
             1, 0,
             0, 0,
             0, 1,    //以左下角为原点，x轴向右，y轴向上
@@ -78,6 +77,9 @@ public class BmpRender implements GLSurfaceView.Renderer {
     private int mMatrixHandle;
     private int mTexCoordHandle;
     private int mTexSamplerHandle;
+
+    int mWidth;
+    int mHeight;
 
     /**
      * 纹理名字
@@ -105,26 +107,9 @@ public class BmpRender implements GLSurfaceView.Renderer {
 
     public BmpRender(Context context) {
         mContext = context;
-        mVertexBuffer = ByteBuffer.
-                allocateDirect(VERTEX.length * 4).
-                order(ByteOrder.nativeOrder()).
-                asFloatBuffer().
-                put(VERTEX);
-        mVertexBuffer.position(0);
-
-        mVertexIndexBuffer = ByteBuffer.allocateDirect(VERTEX_INDEX.length * 4).
-                order(ByteOrder.nativeOrder()).
-                asShortBuffer().
-                put(VERTEX_INDEX);
-
-        mVertexIndexBuffer.position(0);
-
-        mTexVertexBuffer = ByteBuffer.
-                allocateDirect(TEX_VERTEX.length * 4).
-                order(ByteOrder.nativeOrder()).
-                asFloatBuffer().
-                put(TEX_VERTEX);
-        mTexVertexBuffer.position(0);
+        mVertexBuffer = GlUtil.createFloatBuffer(vertex);
+        mVertexIndexBuffer = GlUtil.createShortBuffer(vertex_index);
+        mTexVertexBuffer = GlUtil.createFloatBuffer(coord_vertex);
     }
 
 
@@ -179,9 +164,6 @@ public class BmpRender implements GLSurfaceView.Renderer {
         bitmap.recycle();
     }
 
-    int mWidth;
-    int mHeight;
-
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         mWidth = width;
@@ -200,7 +182,7 @@ public class BmpRender implements GLSurfaceView.Renderer {
         GLES20.glUniform1i(mTexSamplerHandle, 0);
 
         // 用 glDrawElements 来绘制，mVertexIndexBuffer 指定了顶点绘制顺序，这时候图片在显存中
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, VERTEX_INDEX.length, GLES20.GL_UNSIGNED_SHORT, mVertexIndexBuffer);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, vertex_index.length, GLES20.GL_UNSIGNED_SHORT, mVertexIndexBuffer);
 
         //读取显存中的图片，保存到本地，图片由于坐标系的问题，是反转的，绕x轴进行反转
         //DrawBmpUtils.saveImage(mWidth, mHeight);
