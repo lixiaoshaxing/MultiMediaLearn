@@ -10,8 +10,6 @@ import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.utils.FileUtils;
 import com.lx.multimedialearn.utils.GlUtil;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
@@ -65,15 +63,15 @@ public class CameraRender implements GLSurfaceView.Renderer {
             1.0f, 1.0f,
             0.0f, 1.0f,
     };
-    private float[] mMVP = new float[16];
+    private float[] mMVP = {
+            -1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, -1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+    };
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-    }
-
-    @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height) {
-        gl.glViewport(0, 0, width, height);// GlSurfaceView基本参数设置
         //根据TextureID设置画图的初始参数,初始化画图程序，参数
         //(1)根据vertexShader，fragmentShader设置绘图程序
         String vertexShader = FileUtils.readTextFileFromResource(mContext, R.raw.camera_vertex_shader);
@@ -86,14 +84,12 @@ public class CameraRender implements GLSurfaceView.Renderer {
         //(3)初始化显示的顶点等坐标，在这些坐标范围内显示相机预览数据?
         mVertexBuffer = GlUtil.createFloatBuffer(mVertices);
         mTextureCoordsBuffer = GlUtil.createFloatBuffer(mTextureCoords);
-        ByteBuffer bf = ByteBuffer.allocateDirect(drawOrder.length * 2);
-        bf.order(ByteOrder.nativeOrder());
-        drawListBuffer = bf.asShortBuffer();
-        drawListBuffer.put(drawOrder);
-        drawListBuffer.position(0);
+        drawListBuffer = GlUtil.createShortBuffer(drawOrder);
+    }
 
-        //mat4f_LoadOrtho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, mMVP);
-        mat4f_LoadOrtho(1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, mMVP);
+    @Override
+    public void onSurfaceChanged(GL10 gl, int width, int height) {
+        gl.glViewport(0, 0, width, height);// GlSurfaceView基本参数设置
     }
 
     @Override
@@ -119,35 +115,5 @@ public class CameraRender implements GLSurfaceView.Renderer {
             GLES20.glDisableVertexAttribArray(mTextureCoordHandle);
             mSurfaceTexture.detachFromGLContext();
         }
-    }
-
-    //1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f,
-    private static void mat4f_LoadOrtho(float left, float right, float bottom, float top, float near, float far, float[] mout) {
-        float r_l = right - left; //
-        float t_b = top - bottom;
-        float f_n = far - near;
-        float tx = -(right + left) / (right - left);
-        float ty = -(top + bottom) / (top - bottom);
-        float tz = -(far + near) / (far - near);
-
-        mout[0] = 2.0f / r_l;
-        mout[1] = 0.0f;
-        mout[2] = 0.0f;
-        mout[3] = 0.0f;
-
-        mout[4] = 0.0f;
-        mout[5] = 2.0f / t_b;
-        mout[6] = 0.0f;
-        mout[7] = 0.0f;
-
-        mout[8] = 0.0f;
-        mout[9] = 0.0f;
-        mout[10] = -2.0f / f_n;
-        mout[11] = 0.0f;
-
-        mout[12] = tx;
-        mout[13] = ty;
-        mout[14] = tz;
-        mout[15] = 1.0f;
     }
 }
