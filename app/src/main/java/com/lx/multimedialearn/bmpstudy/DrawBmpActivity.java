@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.drawbmp;
+package com.lx.multimedialearn.bmpstudy;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,8 +22,8 @@ import android.widget.Toast;
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.utils.ScreenUtils;
 import com.lx.multimedialearn.utils.WeakHandler;
-import com.lx.multimedialearn.drawbmp.render.BmpRender;
-import com.lx.multimedialearn.drawbmp.stl.ModelRenderer;
+import com.lx.multimedialearn.bmpstudy.render.BmpRender;
+import com.lx.multimedialearn.bmpstudy.stl.ModelRenderer;
 
 import static com.lx.multimedialearn.R.drawable.p;
 

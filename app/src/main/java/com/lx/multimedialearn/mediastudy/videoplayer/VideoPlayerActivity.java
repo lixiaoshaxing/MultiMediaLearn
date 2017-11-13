@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.player;
+package com.lx.multimedialearn.mediastudy.videoplayer;
 
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.lx.multimedialearn.R;
-import com.lx.multimedialearn.player.render.GLPlayerRender2;
+import com.lx.multimedialearn.mediastudy.videoplayer.render.GLPlayerRender;
 
 import java.io.IOException;
 
@@ -148,7 +148,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements View.OnCli
                 e.printStackTrace();
             }
             mGlSurfaceView.setEGLContextClientVersion(2);
-            GLPlayerRender2 mRender = new GLPlayerRender2(mGLSurfaceViewPlayer);
+            GLPlayerRender mRender = new GLPlayerRender(mGLSurfaceViewPlayer);
             mGlSurfaceView.setRenderer(mRender);//(2)把数据提供给Render，使用Render在SurfaceView上绘画预览图像
             mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY); //可以使用dirty进行手动触发更新界面
             mGLSurfaceViewPlayer.prepareAsync();

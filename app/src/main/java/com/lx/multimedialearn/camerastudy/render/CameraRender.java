@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.usecamera.render;
+package com.lx.multimedialearn.camerastudy.render;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;

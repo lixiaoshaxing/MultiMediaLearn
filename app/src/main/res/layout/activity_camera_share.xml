@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:keepScreenOn="true"
     android:orientation="vertical"
-    tools:context="com.lx.multimedialearn.usecamera.CameraShareActivity">
+    tools:context="com.lx.multimedialearn.camerastudy.CameraShareActivity">
 
 
     <LinearLayout

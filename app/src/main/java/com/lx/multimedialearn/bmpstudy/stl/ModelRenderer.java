@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.drawbmp.stl;
+package com.lx.multimedialearn.bmpstudy.stl;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,7 +8,7 @@ import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.util.Log;
 
-import com.lx.multimedialearn.drawbmp.DrawBmpUtils;
+import com.lx.multimedialearn.bmpstudy.DrawBmpUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
