@@ -1,3 +1,4 @@
+//在相机预览界面上画动画，两个texture的混合
 precision mediump float;
 varying vec2 aCoord;
 uniform sampler2D vTexture;

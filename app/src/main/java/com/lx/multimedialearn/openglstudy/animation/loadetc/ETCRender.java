@@ -129,7 +129,7 @@ public class ETCRender implements GLSurfaceView.Renderer {
         GLES20.glUseProgram(mProgram);
         ETC1Util.ETC1Texture t = mPkmReader.getNextTexture();
         ETC1Util.ETC1Texture tAlpha = mPkmReader.getNextTexture();
-        if (t != null && tAlpha != null) {
+        if (t != null && tAlpha != null) { //对两个纹理赋值
             MatrixUtils.getMatrix(SM, type, t.getWidth(), t.getHeight(), width, height);
             GLES20.glUniformMatrix4fv(mHMatrix, 1, false, SM, 0);
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
