@@ -6,6 +6,7 @@ import android.hardware.Camera;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.utils.CameraUtils;
@@ -35,7 +36,6 @@ public class AnimOnCameraActivity extends AppCompatActivity {
         mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_anim_camera);
         mGLSurfaceView.setEGLContextClientVersion(2);
         mSurfaceTexture = new SurfaceTexture(GlUtil.createTextureID());
-        mSurfaceTexture.detachFromGLContext();
         mRender = new AnimOnCameraRender(this, mSurfaceTexture, mGLSurfaceView, GlUtil.createTextureID());
         mGLSurfaceView.setRenderer(mRender);
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -45,6 +45,12 @@ public class AnimOnCameraActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        mGLSurfaceView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRender.replay();
+            }
+        });
         mCamera.startPreview();
     }
 
