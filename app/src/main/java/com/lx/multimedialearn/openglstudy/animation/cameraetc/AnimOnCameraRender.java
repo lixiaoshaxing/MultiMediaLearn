@@ -10,7 +10,6 @@ import android.opengl.GLSurfaceView;
 
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.openglstudy.animation.loadetc.ZipPkmReader;
-import com.lx.multimedialearn.usecamera.render.CameraRender;
 import com.lx.multimedialearn.utils.FileUtils;
 import com.lx.multimedialearn.utils.GlUtil;
 import com.lx.multimedialearn.utils.MatrixUtils;
@@ -178,26 +177,21 @@ public class AnimOnCameraRender implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        /******************画相机**********************/
-        synchronized (CameraRender.class) {
-            GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f); //清理屏幕,设置屏幕为白板
-            mSurfaceTexture.attachToGLContext(mTextureID);
-            mSurfaceTexture.updateTexImage(); //拿到最新的数据
-            //绘制预览数据
-            GLES20.glUseProgram(mProgram);
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureID);
-            GLES20.glEnableVertexAttribArray(mPositionHandle);
-            GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, mVertexBuffer);
-            GLES20.glEnableVertexAttribArray(mTextureCoordHandle);
-            GLES20.glVertexAttribPointer(mTextureCoordHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, mTextureCoordsBuffer);
-            //进行图形的转换
-            GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVP, 0);
-            GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
-            GLES20.glDisableVertexAttribArray(mPositionHandle);
-            GLES20.glDisableVertexAttribArray(mTextureCoordHandle);
-            mSurfaceTexture.detachFromGLContext();
-        }
+        /******************画相机(预览界面有点变形，变换矩阵不正确)**********************/
+        mSurfaceTexture.updateTexImage(); //拿到最新的数据
+        //绘制预览数据
+        GLES20.glUseProgram(mProgram);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureID);
+        GLES20.glEnableVertexAttribArray(mPositionHandle);
+        GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, mVertexBuffer);
+        GLES20.glEnableVertexAttribArray(mTextureCoordHandle);
+        GLES20.glVertexAttribPointer(mTextureCoordHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, mTextureCoordsBuffer);
+        //进行图形的转换
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVP, 0);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
+        GLES20.glDisableVertexAttribArray(mPositionHandle);
+        GLES20.glDisableVertexAttribArray(mTextureCoordHandle);
 
         /****************画动画***********************/
         time = System.currentTimeMillis();
