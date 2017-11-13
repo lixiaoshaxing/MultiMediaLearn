@@ -1,6 +1,7 @@
 package com.lx.multimedialearn.openglstudy.animation.cameraetc;
 
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 import android.opengl.ETC1;
 import android.opengl.ETC1Util;
 import android.opengl.GLES20;
@@ -13,15 +14,16 @@ import com.lx.multimedialearn.utils.GlUtil;
 import com.lx.multimedialearn.utils.MatrixUtils;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
  * 在相机预览界面展示动画
- * 相当于把相机的预览界面和动画界面合成
+ * 首先以camera为背景，画camera预览图
+ * 画动画，保证动画在camera上
  *
  * @author lixiao
  * @since 2017-11-09 21:52
@@ -29,25 +31,67 @@ import javax.microedition.khronos.opengles.GL10;
 public class AnimOnCameraRender implements GLSurfaceView.Renderer {
     private Context mContext;
     private GLSurfaceView mGLSurfaceView;
+    private SurfaceTexture mSurfaceTexture;
+    private int mTextureID; //cameraID
     private long time;
     private long timeStep = 50;
     private ZipPkmReader mPkmReader;
 
-    public AnimOnCameraRender(Context context, GLSurfaceView surfaceView) {
+    public AnimOnCameraRender(Context context, SurfaceTexture surfaceTexture, GLSurfaceView surfaceView, int textureID) {
         this.mContext = context;
         this.mGLSurfaceView = surfaceView;
+        this.mSurfaceTexture = surfaceTexture;
+        this.mTextureID = textureID;
         mPkmReader = new ZipPkmReader(context.getResources().getAssets());
         mPkmReader.setZipPath("assets/etc/cc.zip");
         mPkmReader.open();
     }
 
+    /**
+     * 关闭PKM流，重新读取，重新播放
+     */
     public void replay() {
         mPkmReader.close();
         mPkmReader.open();
         mGLSurfaceView.requestRender();
     }
 
-    private int mProgram;
+    /*****************画相机预览**********************/
+    private FloatBuffer mVertexBuffer; // 顶点缓存
+    private FloatBuffer mTextureCoordsBuffer; // 纹理坐标映射缓存
+    private ShortBuffer drawListBuffer; // 绘制顺序缓存
+    private int mProgram; // OpenGL 可执行程序
+    private int mPositionHandle;
+    private int mTextureCoordHandle;
+    private int mMVPMatrixHandle;
+
+    private short drawOrder[] =
+            {0, 2, 1, 0, 3, 2}; // 绘制顶点的顺序
+
+    private final int COORDS_PER_VERTEX = 2; // 每个顶点的坐标数
+    private final int vertexStride = COORDS_PER_VERTEX * 4; //每个坐标数4 bytes，那么每个顶点占8 bytes
+    private float mVertices[] = {
+            -1.0f, 1.0f,
+            -1.0f, -1.0f,
+            1.0f, -1.0f,
+            1.0f, 1.0f,
+    };
+    private float mTextureCoords[] = {
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+    };
+    private float[] mMVP = {
+            -1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, -1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+
+    /*****************画动画使用*******************/
+    private int mAnimProgram;
     private int[] texture;
     private int mGlHAlpha;
     private int mHPosition;
@@ -90,30 +134,38 @@ public class AnimOnCameraRender implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        /*******画相机************/
+        String vertexShader = FileUtils.readTextFileFromResource(mContext, R.raw.camera_vertex_shader);
+        String fragmentShader = FileUtils.readTextFileFromResource(mContext, R.raw.camera_fragment_shader);
+        mProgram = GlUtil.createProgram(vertexShader, fragmentShader);
+        //(2)获取gl程序中参数，进行赋值
+        mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
+        mTextureCoordHandle = GLES20.glGetAttribLocation(mProgram, "inputTextureCoordinate");
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+        //(3)初始化显示的顶点等坐标，在这些坐标范围内显示相机预览数据?
+        mVertexBuffer = GlUtil.createFloatBuffer(mVertices);
+        mTextureCoordsBuffer = GlUtil.createFloatBuffer(mTextureCoords);
+        drawListBuffer = GlUtil.createShortBuffer(drawOrder);
+
+        /******画动画*************/
         String vertexString = FileUtils.readTextFileFromResource(mContext, R.raw.etc_camera_vertex_shader);
         String fragmentString = FileUtils.readTextFileFromResource(mContext, R.raw.etc_camera_fragment_shader);
-        mProgram = GlUtil.createProgram(vertexString, fragmentString);
+        mAnimProgram = GlUtil.createProgram(vertexString, fragmentString);
         texture = new int[2];
         createEtcTexture(texture);
-        mGlHAlpha = GLES20.glGetUniformLocation(mProgram, "vTextureAlpha");
-        mHPosition = GLES20.glGetAttribLocation(mProgram, "vPosition");
-        mHCoord = GLES20.glGetAttribLocation(mProgram, "vCoord");
-        mHMatrix = GLES20.glGetUniformLocation(mProgram, "vMatrix");
-        mHTexture = GLES20.glGetUniformLocation(mProgram, "vTexture");
-        ByteBuffer a = ByteBuffer.allocateDirect(32);
-        a.order(ByteOrder.nativeOrder());
-        mVerBuffer = a.asFloatBuffer();
-        mVerBuffer.put(pos);
-        mVerBuffer.position(0);
-        ByteBuffer b = ByteBuffer.allocateDirect(32);
-        b.order(ByteOrder.nativeOrder());
-        mTexBuffer = b.asFloatBuffer();
-        mTexBuffer.put(coord);
-        mTexBuffer.position(0);
+        mGlHAlpha = GLES20.glGetUniformLocation(mAnimProgram, "vTextureAlpha");
+        mHPosition = GLES20.glGetAttribLocation(mAnimProgram, "vPosition");
+        mHCoord = GLES20.glGetAttribLocation(mAnimProgram, "vCoord");
+        mHMatrix = GLES20.glGetUniformLocation(mAnimProgram, "vMatrix");
+        mHTexture = GLES20.glGetUniformLocation(mAnimProgram, "vTexture");
+
+        mVerBuffer = GlUtil.createFloatBuffer(pos);
+        mTexBuffer = GlUtil.createFloatBuffer(coord);
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
+        gl.glViewport(0, 0, width, height);
         emptyBuffer = ByteBuffer.allocateDirect(ETC1.getEncodedDataSize(width, height));
         this.width = width;
         this.height = height;
@@ -125,7 +177,7 @@ public class AnimOnCameraRender implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         time = System.currentTimeMillis();
-        GLES20.glUseProgram(mProgram);
+        GLES20.glUseProgram(mAnimProgram);
         ETC1Util.ETC1Texture t = mPkmReader.getNextTexture();
         ETC1Util.ETC1Texture tAlpha = mPkmReader.getNextTexture();
         if (t != null && tAlpha != null) {
