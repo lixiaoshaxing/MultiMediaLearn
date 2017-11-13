@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.usecamera;
+package com.lx.multimedialearn.camerastudy;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,7 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.lx.multimedialearn.R;
-import com.lx.multimedialearn.usecamera.render.CameraRender;
+import com.lx.multimedialearn.camerastudy.render.CameraRender;
 import com.lx.multimedialearn.utils.CameraUtils;
 import com.lx.multimedialearn.utils.FileUtils;
 import com.lx.multimedialearn.utils.GlUtil;

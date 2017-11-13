@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.player.render;
+package com.lx.multimedialearn.mediastudy.videoplayer.render;
 
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
@@ -18,12 +18,16 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * 文件描述
+ * GlsurfaceView进行视频播放，仍然拿的是SurfaceTexture上的数据，和CameraRender方法一样
+ * 和CameraRender不同：（1）不在进行方向的转换 （2）不再进行缩放？
+ * 播放视频要处理方向的变化：
+ * bolg1:逆流的鱼：http://blog.csdn.net/hejjunlin/article/details/62976457，这篇博客提到了uv坐标系，即贴图使用，不太明白
+ * blog2:!!!这篇博客讲解了很多opengl知识，值得学习：从零开始写一个Android平台下的全景视频播放器——2.3 使用GLSurfaceView和MediaPlayer播放一个平面视频：http://blog.csdn.net/Martin20150405/article/details/53319117
  *
  * @author lixiao
  * @since 2017-09-22 00:25
  */
-public class GLPlayerRender2 implements GLSurfaceView.Renderer, SurfaceTexture.OnFrameAvailableListener {
+public class GLPlayerRender implements GLSurfaceView.Renderer, SurfaceTexture.OnFrameAvailableListener {
 
     private int aPositionHandle;
     private int programId;
@@ -58,7 +62,7 @@ public class GLPlayerRender2 implements GLSurfaceView.Renderer, SurfaceTexture.O
     private int screenWidth, screenHeight;
 
 
-    public GLPlayerRender2(MediaPlayer mediaPlayer) {
+    public GLPlayerRender(MediaPlayer mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
         synchronized (this) {
             updateSurface = false;

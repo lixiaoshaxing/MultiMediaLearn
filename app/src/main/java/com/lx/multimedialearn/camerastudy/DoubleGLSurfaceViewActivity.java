@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.usecamera;
+package com.lx.multimedialearn.camerastudy;
 
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.lx.multimedialearn.R;
-import com.lx.multimedialearn.usecamera.render.CameraRender;
+import com.lx.multimedialearn.camerastudy.render.CameraRender;
 import com.lx.multimedialearn.utils.CameraUtils;
 import com.lx.multimedialearn.utils.ScreenUtils;
 

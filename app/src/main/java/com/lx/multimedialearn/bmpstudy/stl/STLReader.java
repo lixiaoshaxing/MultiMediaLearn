@@ -1,9 +1,9 @@
-package com.lx.multimedialearn.drawbmp.stl;
+package com.lx.multimedialearn.bmpstudy.stl;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 
-import com.lx.multimedialearn.drawbmp.DrawBmpUtils;
+import com.lx.multimedialearn.bmpstudy.DrawBmpUtils;
 
 import java.io.File;
 import java.io.FileInputStream;

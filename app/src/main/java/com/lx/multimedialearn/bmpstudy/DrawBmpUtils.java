@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.drawbmp;
+package com.lx.multimedialearn.bmpstudy;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -7,8 +7,8 @@ import android.opengl.GLES20;
 import android.os.Environment;
 import android.util.Log;
 
-import com.lx.multimedialearn.drawbmp.stl.Model;
-import com.lx.multimedialearn.drawbmp.stl.Point;
+import com.lx.multimedialearn.bmpstudy.stl.Model;
+import com.lx.multimedialearn.bmpstudy.stl.Point;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

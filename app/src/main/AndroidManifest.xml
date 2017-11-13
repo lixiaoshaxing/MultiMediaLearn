@@ -29,11 +29,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".drawbmp.DrawBmpActivity" />
-        <activity android:name=".usecamera.CameraUseActivity" />
-        <activity android:name=".usecamera.CameraShareActivity" />
-        <activity android:name=".usecamera.DoubleGLSurfaceViewActivity" />
-        <activity android:name=".player.VideoPlayerActivity" />
+        <activity android:name=".bmpstudy.DrawBmpActivity" />
+        <activity android:name=".camerastudy.CameraUseActivity" />
+        <activity android:name=".camerastudy.CameraShareActivity" />
+        <activity android:name=".camerastudy.DoubleGLSurfaceViewActivity" />
+        <activity android:name=".mediastudy.videoplayer.VideoPlayerActivity" />
         <activity android:name=".openglstudy.OpenGLStudyActivity" />
         <activity android:name=".openglstudy.ParticlesActivity" />
 
@@ -56,7 +56,8 @@
         <activity android:name=".openglstudy.fbo.FBOStudyActivity" />
         <activity android:name=".openglstudy.animation.AnimIndexActivity" />
         <activity android:name=".openglstudy.animation.loadetc.LoadETCActivity" />
-        <activity android:name=".openglstudy.animation.cameraetc.AnimOnCameraActivity"></activity>
+        <activity android:name=".openglstudy.animation.cameraetc.AnimOnCameraActivity" />
+        <activity android:name=".mediastudy.MediaIndexActivity"></activity>
     </application>
 
 </manifest>

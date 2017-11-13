@@ -1,6 +1,6 @@
-package com.lx.multimedialearn.drawbmp.stl;
+package com.lx.multimedialearn.bmpstudy.stl;
 
-import com.lx.multimedialearn.drawbmp.DrawBmpUtils;
+import com.lx.multimedialearn.bmpstudy.DrawBmpUtils;
 
 import java.nio.FloatBuffer;
 

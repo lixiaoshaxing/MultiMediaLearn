@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.drawbmp.render;
+package com.lx.multimedialearn.bmpstudy.render;
 
 import android.content.Context;
 import android.graphics.Bitmap;
