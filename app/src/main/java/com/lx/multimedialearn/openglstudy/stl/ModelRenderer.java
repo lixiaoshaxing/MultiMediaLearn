@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.bmpstudy.stl;
+package com.lx.multimedialearn.openglstudy.stl;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,7 +8,7 @@ import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.util.Log;
 
-import com.lx.multimedialearn.bmpstudy.DrawBmpUtils;
+import com.lx.multimedialearn.utils.GlUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +51,6 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        //启用深度缓存？干嘛用的
         gl.glEnable(GL10.GL_DEPTH_TEST);
         gl.glClearColor(0f, 0f, 0f, 0f);
         //设置深度缓存值
@@ -89,10 +88,10 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
         gl.glEnable(GL10.GL_LIGHT0);
 
         //设置0号灯光的参数
-        gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, DrawBmpUtils.float2Buffer(ambient));
-        gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, DrawBmpUtils.float2Buffer(diffuse));
-        gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, DrawBmpUtils.float2Buffer(specular));
-        gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, DrawBmpUtils.float2Buffer(lightPosition));
+        gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, GlUtil.createFloatBuffer(ambient));
+        gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, GlUtil.createFloatBuffer(diffuse));
+        gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, GlUtil.createFloatBuffer(specular));
+        gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, GlUtil.createFloatBuffer(lightPosition));
     }
 
 
@@ -107,17 +106,17 @@ public class ModelRenderer implements GLSurfaceView.Renderer {
      */
     private void enableMaterial(GL10 gl) {
         //第一个参数是固定的，android只能使用这一个参数，第二个参数指明要处理的
-        gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, DrawBmpUtils.float2Buffer(materialAmb)); //环境
-        gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, DrawBmpUtils.float2Buffer(materialDiff)); //漫反射
-        gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR, DrawBmpUtils.float2Buffer(materialSpec)); //镜面反射
+        gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, GlUtil.createFloatBuffer(materialAmb)); //环境
+        gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, GlUtil.createFloatBuffer(materialDiff)); //漫反射
+        gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR, GlUtil.createFloatBuffer(materialSpec)); //镜面反射
     }
 
 
     //纹理pxy文件，图片，stl文件进行绑定
     private void initConfigData(GL10 gl) {
-        float r = DrawBmpUtils.getR(models);
+        float r = STLUtils.getR(models);
         mScalef = 0.5f;
-        mCenterPoint = DrawBmpUtils.getCenter(models);
+        mCenterPoint = STLUtils.getCenter(models);
 
         //绑定纹理
         for (Model model : models) {

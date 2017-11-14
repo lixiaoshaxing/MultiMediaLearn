@@ -11,6 +11,7 @@ import com.lx.multimedialearn.main.TabModel;
 import com.lx.multimedialearn.openglstudy.animation.AnimIndexActivity;
 import com.lx.multimedialearn.openglstudy.fbo.FBOStudyActivity;
 import com.lx.multimedialearn.openglstudy.image.ImageProcessActivity;
+import com.lx.multimedialearn.openglstudy.stl.STLModelActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class OpenGLIndexActivity extends AppCompatActivity {
         list.add(new TabModel("3. 图片处理-image", "OpenGL处理图片，色调，放大，虚化等", ImageProcessActivity.class));
         list.add(new TabModel("4. 离屏渲染-fbo", "OpenGL FBO等特性，保存EGL上下文", FBOStudyActivity.class));
         list.add(new TabModel("5. 逐帧动画渲染-animation", "OpenGL 解析ETC，逐帧渲染动画", AnimIndexActivity.class));
+        list.add(new TabModel("6. STL模型数据加载-stl", "解析stl模型数据，加载3D图形", STLModelActivity.class));
         mRecContent.setAdapter(new MainAdapter(list));
     }
 }

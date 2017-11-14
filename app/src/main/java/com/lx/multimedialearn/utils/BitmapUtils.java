@@ -1,12 +1,16 @@
 package com.lx.multimedialearn.utils;
 
 import android.graphics.Bitmap;
+import android.opengl.GLES20;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 /**
@@ -66,5 +70,70 @@ public class BitmapUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void saveBitmap(final Bitmap b, String path) {
+        File folder = new File(path);
+        if (!folder.exists() && !folder.mkdirs()) {
+            Log.i("sys.out", "保存图片生成文件夹出错");
+            return;
+        }
+        long dataTake = System.currentTimeMillis();
+        final String jpegName = path + dataTake + ".jpg";
+        try {
+            FileOutputStream fout = new FileOutputStream(jpegName);
+            BufferedOutputStream bos = new BufferedOutputStream(fout);
+            b.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bos.flush();
+            bos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 保存图片
+     *
+     * @param byteBuffer
+     * @param s
+     * @param width
+     * @param height
+     */
+    public static void saveRgb2Bitmap(ByteBuffer byteBuffer, String s, int width, int height) {
+        BufferedOutputStream bos = null;
+        try {
+            bos = new BufferedOutputStream(new FileOutputStream(s));
+            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            bmp.copyPixelsFromBuffer(byteBuffer);
+            bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
+            bmp.recycle();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 读取显存中的内容，保存为图片，必须是显存中有内容
+     * 把显存的内容读取到内存，推送出去，这个方法很重要
+     *
+     * @param width
+     * @param height
+     */
+    public static void saveImage(int width, int height) {
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(width * height * 4);
+        byteBuffer.position(0);
+        long start = System.nanoTime();
+        GLES20.glReadPixels(0, 0, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, byteBuffer);
+        long end = System.nanoTime();
+        Log.i("sys.out", "glReadPixel时间：" + (end - start));
+        BitmapUtils.saveRgb2Bitmap(byteBuffer, Environment.getExternalStorageDirectory().getAbsolutePath() + "/gl_dump_" + width + "_" + height + ".png", width, height);
     }
 }
