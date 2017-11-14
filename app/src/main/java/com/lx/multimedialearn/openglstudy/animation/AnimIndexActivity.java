@@ -33,6 +33,5 @@ public class AnimIndexActivity extends AppCompatActivity {
         list.add(new TabModel("1. ETC1加载动画-loadetc", "使用ETC加载etc标准的zip包", LoadETCActivity.class));
         list.add(new TabModel("2. 在相机上加载动画-cameraetc", "Camera使用ETC加载etc标准的zip包", AnimOnCameraActivity.class));
         mRecIndex.setAdapter(new MainAdapter(list));
-        //test
     }
 }

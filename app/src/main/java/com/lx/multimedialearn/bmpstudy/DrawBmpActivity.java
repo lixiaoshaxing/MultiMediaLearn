@@ -9,21 +9,17 @@ import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.lx.multimedialearn.R;
-import com.lx.multimedialearn.utils.ScreenUtils;
-import com.lx.multimedialearn.utils.WeakHandler;
 import com.lx.multimedialearn.bmpstudy.render.BmpRender;
-import com.lx.multimedialearn.bmpstudy.stl.ModelRenderer;
+import com.lx.multimedialearn.utils.GlUtil;
+import com.lx.multimedialearn.utils.ScreenUtils;
 
 import static com.lx.multimedialearn.R.drawable.p;
 
@@ -35,23 +31,17 @@ public class DrawBmpActivity extends AppCompatActivity {
     private SurfaceView mSurfaceView;
     private CustomBmpView mCustomBmpView;
     private GLSurfaceView mGlSurfaceView; //画bitmap
-    private GLSurfaceView mGlSurfaceViewStl; //使用GLSurfaceView画stl模型
-    private SeekBar mSeekBarStlScale;
     private TextureView mTextureView;
-
 
     private volatile boolean isDrawing = false; //surface绘画使用
     private Thread mThread;  //suface绘图需要在子线程
     private volatile Bitmap mBmpTemp; //公用bitmap
     private BmpRender mBmpRender; //使用GlSurfaceView画图的自定义渲染器
-    private ModelRenderer mModelRender; //读取stl文件画模型
-    private float mRotateDegree = 0; //让模型
-    private WeakHandler mHandler; //让模型旋转
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!DrawBmpUtils.isSupportGLES20(this)) {
+        if (!GlUtil.checkGLEsVersion_2(this)) {
             Toast.makeText(this, "不支持open gl es 2.0", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -60,8 +50,6 @@ public class DrawBmpActivity extends AppCompatActivity {
         mImgPic = (ImageView) findViewById(R.id.img_draw_bmp_imageview);
         mSurfaceView = (SurfaceView) findViewById(R.id.surface_draw_bmp_surfaceview);
         mGlSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_draw_bmp_glsurfaceview);
-        mGlSurfaceViewStl = (GLSurfaceView) findViewById(R.id.glsurface_draw_stl_glsurfaceview);
-        mSeekBarStlScale = (SeekBar) findViewById(R.id.seekbar_draw_bmp_stl_scale);
         mTextureView = (TextureView) findViewById(R.id.textureview_draw_bmp_textureview);
         mBmpTemp = BitmapFactory.decodeResource(getResources(), p, null);
         //1. 在ImageView上画图，使用双缓冲
@@ -72,9 +60,7 @@ public class DrawBmpActivity extends AppCompatActivity {
         //4. 在GlSurfaceView上画图
         //SurfaceView,GLSurefaceView,TextureView不同：http://www.jianshu.com/p/e8da1bf61bc7
         drawBmpOnGlSurfaceView();
-        //5. 在GLSurfaceView上导入模型
-        drawStlOnGlSurfaceView();
-        //6. 在TextureView上画图
+        //5. 在TextureView上画图
         drawBmpOnTextureView();
     }
 
@@ -106,58 +92,6 @@ public class DrawBmpActivity extends AppCompatActivity {
             public void onSurfaceTextureUpdated(SurfaceTexture surface) {
             }
         });
-    }
-
-
-    /**
-     * 读取stl文件，画带纹理的模型
-     * 1. 参考blog：http://blog.csdn.net/huachao1001/article/details/51545450
-     */
-    private void drawStlOnGlSurfaceView() {
-        mModelRender = new ModelRenderer(this);
-        mHandler = new WeakHandler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                mModelRender.rotate(mRotateDegree);
-                mGlSurfaceView.invalidate();
-                return false;
-            }
-        });
-
-        //定时发送消息，旋转模型
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(100);
-                        mHandler.sendEmptyMessage(0x001);
-                        mRotateDegree += 5;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-
-        //对模型进行放大缩小
-        mSeekBarStlScale.setMax(100);
-        mSeekBarStlScale.setProgress(50);
-        mSeekBarStlScale.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mModelRender.setScale(1f * progress / 100);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-        mGlSurfaceViewStl.setRenderer(mModelRender);
     }
 
     /**
@@ -277,14 +211,12 @@ public class DrawBmpActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mGlSurfaceView.onPause();
-        mGlSurfaceViewStl.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mGlSurfaceView.onResume();
-        mGlSurfaceViewStl.onResume();
     }
 
     @Override

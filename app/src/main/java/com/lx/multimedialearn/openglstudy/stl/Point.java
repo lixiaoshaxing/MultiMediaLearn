@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.bmpstudy.stl;
+package com.lx.multimedialearn.openglstudy.stl;
 
 /**
  * 顶点信息：从模型中解析出来的三维空间的顶点

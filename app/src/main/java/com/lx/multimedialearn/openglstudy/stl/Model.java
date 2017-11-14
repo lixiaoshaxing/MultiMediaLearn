@@ -1,6 +1,6 @@
-package com.lx.multimedialearn.bmpstudy.stl;
+package com.lx.multimedialearn.openglstudy.stl;
 
-import com.lx.multimedialearn.bmpstudy.DrawBmpUtils;
+import com.lx.multimedialearn.utils.GlUtil;
 
 import java.nio.FloatBuffer;
 
@@ -48,7 +48,7 @@ public class Model {
     // picture->id->textures
     public void setTextures(float[] textures) {
         this.textures = textures;
-        textureBuffer = DrawBmpUtils.float2Buffer(textures);
+        textureBuffer = GlUtil.createFloatBuffer(textures);
     }
 
     public String getPictureName() {
@@ -109,7 +109,7 @@ public class Model {
 
     public void setVerts(float[] verts) {
         this.verts = verts;
-        vertBuffer = DrawBmpUtils.float2Buffer(verts);
+        vertBuffer = GlUtil.createFloatBuffer(verts);
     }
 
     public FloatBuffer getVertBuffer() {
@@ -122,7 +122,7 @@ public class Model {
 
     public void setVnorms(float[] vnorms) {
         this.vnorms = vnorms;
-        vnormBuffer = DrawBmpUtils.float2Buffer(vnorms);
+        vnormBuffer = GlUtil.createFloatBuffer(vnorms);
     }
 
     public FloatBuffer getVnormBuffer() {

@@ -1,9 +1,9 @@
-package com.lx.multimedialearn.bmpstudy.stl;
+package com.lx.multimedialearn.openglstudy.stl;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 
-import com.lx.multimedialearn.bmpstudy.DrawBmpUtils;
+import com.lx.multimedialearn.utils.MathUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,8 +103,8 @@ public class STLReader {
         for (int i = 0; i < facetCount; i++) {
             //第i个顶点对应的纹理坐标
             //tx和ty的取值范围为[0,1],表示的坐标位置是在纹理图片上的对应比例
-            float tx = DrawBmpUtils.byte4ToFloat(textureBytes, textureOffset);
-            float ty = DrawBmpUtils.byte4ToFloat(textureBytes, textureOffset + 4);
+            float tx = MathUtils.byte4ToFloat(textureBytes, textureOffset);
+            float ty = MathUtils.byte4ToFloat(textureBytes, textureOffset + 4);
             textureOffset += 8;
             textures[i * 2] = tx; //一个点坐标占用了两个位置
             //我们的pxy文件原点是在左下角，因此需要用1减去y坐标值
@@ -129,7 +129,7 @@ public class STLReader {
         //4个字节描述三角面的个数
         byte[] bytes = new byte[4];
         in.read(bytes); //读取到了三角面片个数
-        int facetCount = DrawBmpUtils.byte4ToInt(bytes, 0);
+        int facetCount = MathUtils.byte4ToInt(bytes, 0);
         model.setFacetCount(facetCount);
         if (facetCount == 0) {
             in.close();
@@ -183,9 +183,9 @@ public class STLReader {
                 }
                 for (int j = 0; j < 4; j++) { // 50 = 12 * 4 + 2, 每次读出来12个字节，设置为法向量，顶点坐标
                     //每次读出来4个字节？
-                    float x = DrawBmpUtils.byte4ToFloat(facetBytes, stlOffset);
-                    float y = DrawBmpUtils.byte4ToFloat(facetBytes, stlOffset + 4);
-                    float z = DrawBmpUtils.byte4ToFloat(facetBytes, stlOffset + 8);
+                    float x = MathUtils.byte4ToFloat(facetBytes, stlOffset);
+                    float y = MathUtils.byte4ToFloat(facetBytes, stlOffset + 4);
+                    float z = MathUtils.byte4ToFloat(facetBytes, stlOffset + 8);
                     stlOffset += 12;
 
                     if (j == 0) {  //读取的法向量
@@ -217,7 +217,7 @@ public class STLReader {
                         }
                     }
                 }
-                short r = DrawBmpUtils.byte2ToShort(facetBytes, stlOffset);
+                short r = MathUtils.byte2ToShort(facetBytes, stlOffset);
                 stlOffset += 2;
                 remarks[i] = r;
             }
