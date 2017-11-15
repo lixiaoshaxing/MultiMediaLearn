@@ -389,16 +389,16 @@ public class GlUtil {
     }
 
     /**
-     * 创建一个纹理ID
+     * 创建一个相机使用的纹理ID
      *
      * @return
      */
-    public static int createTextureID() {
+    public static int createCameraTextureID() {
         int[] texture = new int[1];
 
         GLES20.glGenTextures(1, texture, 0);
         // Bind the texture handle to the 2D texture target.
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, texture[0]);
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, texture[0]);//把相机中的图像yuv转换为rgb
         // Configure min/mag filtering, i.e. what scaling method do we use if what we're rendering
         // is smaller or larger than the source image.
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,  //设置剪裁参数
@@ -410,6 +410,28 @@ public class GlUtil {
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
                 GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
 
+        return texture[0];
+    }
+
+    /**
+     * 生成普通纹理ID，没有在纹理上绑定bitmap
+     *
+     * @return
+     */
+    public static int createTextureID() {
+        int[] texture = new int[1];
+        //生成纹理
+        GLES20.glGenTextures(1, texture, 0);
+        //生成纹理
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]);
+        //设置缩小过滤为使用纹理中坐标最接近的一个像素的颜色作为需要绘制的像素颜色
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        //设置放大过滤为使用纹理中坐标最接近的若干个颜色，通过加权平均算法得到需要绘制的像素颜色
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        //设置环绕方向S，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        //设置环绕方向T，截取纹理坐标到[1/2n,1-1/2n]。将导致永远不会与border融合
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
         return texture[0];
     }
 
