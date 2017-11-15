@@ -68,10 +68,11 @@ public class ObjRender implements GLSurfaceView.Renderer {
         //画
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glUseProgram(mProgram);
+        Matrix.rotateM(matrix, 0, 0.3f, 0, 1, 1);
         GLES20.glUniformMatrix4fv(mMatrixLocation, 1, false, matrix, 0);
         GLES20.glEnableVertexAttribArray(mVertexLocation);
-        GLES20.glVertexAttribPointer(mVertexLocation, 3, GLES20.GL_FLOAT, false, 3 * 4, mObj3D.vert);
-        GLES20.glEnableVertexAttribArray(mNormalLocation);
+        GLES20.glVertexAttribPointer(mVertexLocation, 3, GLES20.GL_FLOAT, false, 3 * 4, mObj3D.vert);//3个点画出一个三角形
+        GLES20.glEnableVertexAttribArray(mNormalLocation); //法线，用来标明光照
         GLES20.glVertexAttribPointer(mNormalLocation, 3, GLES20.GL_FLOAT, false, 3 * 4, mObj3D.vertNorl);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mObj3D.vertCount);
         GLES20.glDisableVertexAttribArray(mNormalLocation);

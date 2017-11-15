@@ -35,8 +35,8 @@ public class AnimOnCameraActivity extends AppCompatActivity {
         initCamreaParameters();
         mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_anim_camera);
         mGLSurfaceView.setEGLContextClientVersion(2);
-        mSurfaceTexture = new SurfaceTexture(GlUtil.createTextureID());
-        mRender = new AnimOnCameraRender(this, mSurfaceTexture, mGLSurfaceView, GlUtil.createTextureID());
+        mSurfaceTexture = new SurfaceTexture(GlUtil.createCameraTextureID());
+        mRender = new AnimOnCameraRender(this, mSurfaceTexture, mGLSurfaceView, GlUtil.createCameraTextureID());
         mGLSurfaceView.setRenderer(mRender);
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         mCamera.stopPreview();
