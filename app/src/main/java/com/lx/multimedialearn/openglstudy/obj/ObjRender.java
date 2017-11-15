@@ -30,7 +30,7 @@ public class ObjRender implements GLSurfaceView.Renderer {
         mObj3D = new Obj3D();
         this.mContext = context;
         try {
-            ObjModelReader.read(context.getAssets().open("3dres/hat.obj"), mObj3D);
+            ObjModelUtils.read(context.getAssets().open("3dres/hat.obj"), mObj3D);
         } catch (IOException e) {
             e.printStackTrace();
         }

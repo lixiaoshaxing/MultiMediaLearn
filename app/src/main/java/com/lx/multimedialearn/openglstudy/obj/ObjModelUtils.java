@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * @author lixiao
  * @since 2017-11-14 22:43
  */
-public class ObjModelReader {
+public class ObjModelUtils {
 
     public static void read(InputStream stream, Obj3D obj3D) {
         ArrayList<Float> alv = new ArrayList<Float>();//原始顶点坐标列表
@@ -82,7 +82,6 @@ public class ObjModelReader {
                 }
             }
 
-            //这些就是比较熟悉的了，一切都为了能够把数据给GPU
             int size = alvResult.size();
             float[] vXYZ = new float[size];
             for (int i = 0; i < size; i++) {
