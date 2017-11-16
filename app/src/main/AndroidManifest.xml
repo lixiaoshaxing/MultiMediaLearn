@@ -61,7 +61,8 @@
         <activity android:name=".mediastudy.hardcode.HardCodeActivity" />
         <activity android:name=".openglstudy.stl.STLModelActivity" />
         <activity android:name=".openglstudy.obj.ObjModelActivity" />
-        <activity android:name=".openglstudy.obj.ObjMtlActivity"></activity>
+        <activity android:name=".openglstudy.obj.ObjMtlActivity" />
+        <activity android:name=".openglstudy.animation.watermark.CameraWaterMarkActivity"></activity>
     </application>
 
 </manifest>
