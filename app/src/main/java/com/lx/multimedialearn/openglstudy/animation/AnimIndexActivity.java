@@ -10,6 +10,7 @@ import com.lx.multimedialearn.main.MainAdapter;
 import com.lx.multimedialearn.main.TabModel;
 import com.lx.multimedialearn.openglstudy.animation.cameraetc.AnimOnCameraActivity;
 import com.lx.multimedialearn.openglstudy.animation.loadetc.LoadETCActivity;
+import com.lx.multimedialearn.openglstudy.animation.watermark.CameraWaterMarkActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,8 @@ public class AnimIndexActivity extends AppCompatActivity {
         List<TabModel> list = new ArrayList<>();
         list.add(new TabModel("1. ETC1加载动画-loadetc", "使用ETC加载etc标准的zip包", LoadETCActivity.class));
         list.add(new TabModel("2. 在相机上加载动画-cameraetc", "Camera使用ETC加载etc标准的zip包", AnimOnCameraActivity.class));
+        list.add(new TabModel("3. 相机预览界面+水印-watermark", "使用OpenGL在Camera预览界面加水印", CameraWaterMarkActivity.class));
+        list.add(new TabModel("4. 在相机上加载动画-cameraetc", "Camera使用ETC加载etc标准的zip包", AnimOnCameraActivity.class));
         mRecIndex.setAdapter(new MainAdapter(list));
     }
 }

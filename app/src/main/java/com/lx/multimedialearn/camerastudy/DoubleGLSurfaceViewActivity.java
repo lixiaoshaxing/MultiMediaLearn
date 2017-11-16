@@ -48,12 +48,12 @@ public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
 
         /************************以下初始化两个GL，共用一个SurfaceTexture**************************************/
         mGLOne.setEGLContextClientVersion(2);
-        mRenderOne = new CameraRender(this, mSurfaceTexture, createCameraTextureID());
+        mRenderOne = new CameraRender(this, mSurfaceTexture, mTextureID);
         mGLOne.setRenderer(mRenderOne);
         mGLOne.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置刷新模式
 
         mGLTwo.setEGLContextClientVersion(2);
-        mRenderTwo = new CameraRender(this, mSurfaceTexture, createCameraTextureID());
+        mRenderTwo = new CameraRender(this, mSurfaceTexture, mTextureID);
         mGLTwo.setRenderer(mRenderTwo);
         mGLTwo.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY); //设置刷新模式
 
@@ -81,6 +81,8 @@ public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
         });
     }
 
+    private int mTextureID;
+
     /**
      * 打开camera
      */
@@ -106,7 +108,8 @@ public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
                 mCamera.addCallbackBuffer(buffers);
             }
         });
-        mSurfaceTexture = new SurfaceTexture(createCameraTextureID());
+        mTextureID = createCameraTextureID();
+        mSurfaceTexture = new SurfaceTexture(mTextureID);
         mSurfaceTexture.detachFromGLContext(); //创建完成后立刻detachOpenGL世界的上下文，在CameraRender中进行绘画时，根据ID attachToGLContext，attach到当前GLSurfaceView，进行绘画，注意线程同步
         mCamera.stopPreview();
         try {
