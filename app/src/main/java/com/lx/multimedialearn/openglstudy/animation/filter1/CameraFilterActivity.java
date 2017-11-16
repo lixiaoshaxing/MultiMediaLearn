@@ -6,6 +6,8 @@ import android.hardware.Camera;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.utils.CameraUtils;
@@ -21,7 +23,7 @@ import java.io.IOException;
  */
 public class CameraFilterActivity extends AppCompatActivity {
 
-    private GLSurfaceView mGLSurfaceView;
+    private GLSurfaceView mGlSurfaceView;
     private Filter1Renderer mRender;
     private SurfaceTexture mSurfaceTexture; //使用SurfaceTexture承载camera回调数据，渲染到Gl上
     private Camera mCamera;
@@ -35,14 +37,15 @@ public class CameraFilterActivity extends AppCompatActivity {
         if (!GlUtil.checkGLEsVersion_2(this)) {
             ToastUtils.show(this, "不支持gl 2.0！");
         }
-        mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_camera_filter_player);
+        mGlSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_camera_filter_player);
         mTextureID = GlUtil.createCameraTextureID();
         initCamreaParameters();
         mSurfaceTexture = new SurfaceTexture(mTextureID); //surfacetexture用来承载相机的预览数据，绑定到TextureID上，GLSurfaceView拿到ID进行绘画
         mRender = new Filter1Renderer(this, mSurfaceTexture, mTextureID);
-        mGLSurfaceView.setEGLContextClientVersion(2);
-        mGLSurfaceView.setRenderer(mRender);
-        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        mSurfaceTexture.detachFromGLContext();
+        mGlSurfaceView.setEGLContextClientVersion(2);
+        mGlSurfaceView.setRenderer(mRender);
+        mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         try {
             mCamera.setPreviewTexture(mSurfaceTexture);
         } catch (IOException e) {
@@ -52,15 +55,59 @@ public class CameraFilterActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.camera_filter_activity_menu, menu);
+        return true;
+    }
+
+    private boolean isHalf = false;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_image_config:
+                isHalf = !isHalf;
+                if (isHalf) {
+                    item.setTitle("处理一半");
+                } else {
+                    item.setTitle("全部处理");
+                }
+                mRender.setIsHalf(isHalf);
+                break;
+            case R.id.menu_image_origin:
+                mRender.setInfo(0, new float[]{0.0f, 0.0f, 0.0f});
+                break;
+            case R.id.menu_image_gray:
+                mRender.setInfo(1, new float[]{0.299f, 0.587f, 0.114f});
+                break;
+            case R.id.menu_image_cool:
+                mRender.setInfo(2, new float[]{0.0f, 0.0f, 0.1f});
+                break;
+            case R.id.menu_image_warm:
+                mRender.setInfo(2, new float[]{0.1f, 0.1f, 0.0f});
+                break;
+            case R.id.menu_image_blur:
+                mRender.setInfo(3, new float[]{0.006f, 0.004f, 0.002f});
+                break;
+            case R.id.menu_image_magn:
+                mRender.setInfo(4, new float[]{0.0f, 0.0f, 0.4f});
+                break;
+        }
+        //设置渲染器
+        mGlSurfaceView.requestRender();
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        mGLSurfaceView.onPause();
+        mGlSurfaceView.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mGLSurfaceView.onResume();
+        mGlSurfaceView.onResume();
     }
 
     private void initCamreaParameters() {
