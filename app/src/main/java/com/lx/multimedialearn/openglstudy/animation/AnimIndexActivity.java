@@ -9,6 +9,7 @@ import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.main.MainAdapter;
 import com.lx.multimedialearn.main.TabModel;
 import com.lx.multimedialearn.openglstudy.animation.cameraetc.AnimOnCameraActivity;
+import com.lx.multimedialearn.openglstudy.animation.filter1.CameraFilterActivity;
 import com.lx.multimedialearn.openglstudy.animation.loadetc.LoadETCActivity;
 import com.lx.multimedialearn.openglstudy.animation.watermark.CameraWaterMarkActivity;
 
@@ -33,8 +34,11 @@ public class AnimIndexActivity extends AppCompatActivity {
         List<TabModel> list = new ArrayList<>();
         list.add(new TabModel("1. ETC1加载动画-loadetc", "使用ETC加载etc标准的zip包", LoadETCActivity.class));
         list.add(new TabModel("2. 在相机上加载动画-cameraetc", "Camera使用ETC加载etc标准的zip包", AnimOnCameraActivity.class));
-        list.add(new TabModel("3. 相机预览界面+水印-watermark", "使用OpenGL在Camera预览界面加水印", CameraWaterMarkActivity.class));
-        list.add(new TabModel("4. 在相机上加载动画-cameraetc", "Camera使用ETC加载etc标准的zip包", AnimOnCameraActivity.class));
+        list.add(new TabModel("3. Camera+水印-watermark", "使用OpenGL在Camera预览界面加水印", CameraWaterMarkActivity.class));
+        list.add(new TabModel("4. camera+滤镜-filter1", "在相机预览界面上使用纯滤镜", CameraFilterActivity.class));
+        list.add(new TabModel("5. camera+滤镜+水印-filter2", "在相机预览界面上使用滤镜，滤镜后加水印", AnimOnCameraActivity.class));
+        list.add(new TabModel("6. camera+水印+滤镜-filter3", "在相机预览界面上加水印，最后加滤镜", AnimOnCameraActivity.class));
+        list.add(new TabModel("7. camera+美颜-filter4", "在相机预览界面上美颜", AnimOnCameraActivity.class));
         mRecIndex.setAdapter(new MainAdapter(list));
     }
 }
