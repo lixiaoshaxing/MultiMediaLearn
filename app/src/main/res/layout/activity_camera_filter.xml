@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lx.multimedialearn.main.MainActivity">
+    tools:context="com.lx.multimedialearn.openglstudy.animation.filter1.CameraFilterActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rec_main_content"
+    <android.opengl.GLSurfaceView
+        android:id="@+id/glsurface_camera_filter_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 </FrameLayout>
