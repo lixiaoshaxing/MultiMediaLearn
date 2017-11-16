@@ -12,6 +12,7 @@ import com.lx.multimedialearn.openglstudy.animation.AnimIndexActivity;
 import com.lx.multimedialearn.openglstudy.fbo.FBOStudyActivity;
 import com.lx.multimedialearn.openglstudy.image.ImageProcessActivity;
 import com.lx.multimedialearn.openglstudy.obj.ObjModelActivity;
+import com.lx.multimedialearn.openglstudy.obj.ObjMtlActivity;
 import com.lx.multimedialearn.openglstudy.stl.STLModelActivity;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class OpenGLIndexActivity extends AppCompatActivity {
         list.add(new TabModel("5. 逐帧动画渲染-animation", "OpenGL 解析ETC，逐帧渲染动画", AnimIndexActivity.class));
         list.add(new TabModel("6. STL模型数据加载-stl", "解析stl模型数据，加载3D图形", STLModelActivity.class));
         list.add(new TabModel("7. OBJ 3D模型加载-obj", "解析Obj模型数据，加载3D图形", ObjModelActivity.class));
+        list.add(new TabModel("8. OBJ-Mtl 3D模型加载-obj", "解析Obj模型数据，Mtl加载光照，纹理等材质，加载3D图形", ObjMtlActivity.class));
         mRecContent.setAdapter(new MainAdapter(list));
     }
 }
