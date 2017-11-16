@@ -60,7 +60,8 @@
         <activity android:name=".mediastudy.MediaIndexActivity" />
         <activity android:name=".mediastudy.hardcode.HardCodeActivity" />
         <activity android:name=".openglstudy.stl.STLModelActivity" />
-        <activity android:name=".openglstudy.obj.ObjModelActivity"></activity>
+        <activity android:name=".openglstudy.obj.ObjModelActivity" />
+        <activity android:name=".openglstudy.obj.ObjMtlActivity"></activity>
     </application>
 
 </manifest>
