@@ -127,9 +127,9 @@ public class AnimOnCameraRender implements GLSurfaceView.Renderer {
     //纹理坐标
     private float[] coord = {
             0.0f, 0.0f,
-            0.0f, 1.0f,
+            0.0f, 0.9f,
             1.0f, 0.0f,
-            1.0f, 1.0f,
+            1.0f, 0.9f,
     };
 
     @Override
