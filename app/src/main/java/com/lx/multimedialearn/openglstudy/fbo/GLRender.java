@@ -295,7 +295,7 @@ public class GLRender extends HandlerThread {
         GLES20.glUniform3fv(uChangeColorLocation, 1, changeColor, 0);
         /******************之上都为画图的基本代码**********************/
 
-        createEnvi(); //创建
+        createFrameBuffer(); //创建
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fFrame[0]); //FrameBuffer和texture，Render的绑定
         GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
                 GLES20.GL_TEXTURE_2D, fTexture[1], 0);
@@ -321,7 +321,11 @@ public class GLRender extends HandlerThread {
     }
 
 
-    public void createEnvi() {
+    /**
+     * 使用FBO：创建Framebuffer，创建TextureBuffer，RenderBuffer，绑定到FrameBuffer，之后渲染都是在Framebuffer上
+     * 纹理是在TextureBuffer中，深度检测，模板是在RenderBuffer中，最后在屏幕上把TextureBuffer作为普通的一帧渲染出来
+     */
+    public void createFrameBuffer() {
         GLES20.glGenFramebuffers(1, fFrame, 0);
         GLES20.glGenRenderbuffers(1, fRender, 0);
         GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, fRender[0]);

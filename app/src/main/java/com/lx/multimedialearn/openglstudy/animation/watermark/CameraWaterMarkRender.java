@@ -69,8 +69,8 @@ public class CameraWaterMarkRender implements GLSurfaceView.Renderer {
     private float mTextureCoords[] = {
             0.0f, 0.0f,
             1.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f,
+            1.0f, 0.9f,
+            0.0f, 0.9f,
     };
     private float[] mMVP = {
             -1.0f, 0.0f, 0.0f, 0.0f,
@@ -94,8 +94,8 @@ public class CameraWaterMarkRender implements GLSurfaceView.Renderer {
             1.0f, 1.0f, //右上
     };
     private float mWMTextureCoords[] = {
-            0.0f, 0.9f, //左下
-            1.0f, 0.9f, //右下
+            0.0f, 1.0f, //左下
+            1.0f, 1.0f, //右下
             0.0f, 0.0f, //左上
             1.0f, 0.0f, //右上
     };

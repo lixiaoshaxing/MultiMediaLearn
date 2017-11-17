@@ -119,6 +119,7 @@ public class Filter1Renderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         gl.glViewport(0, 0, width, height);// GlSurfaceView基本参数设置
+        uXY = width / height;
     }
 
     @Override
