@@ -63,8 +63,9 @@
         <activity android:name=".openglstudy.obj.ObjModelActivity" />
         <activity android:name=".openglstudy.obj.ObjMtlActivity" />
         <activity android:name=".openglstudy.animation.watermark.CameraWaterMarkActivity" />
-        <activity android:name=".openglstudy.animation.filter1.CameraFilterActivity" />
-        <activity android:name=".openglstudy.animation.filter2.CameraFilterWaterActivity"></activity>
+        <activity android:name=".openglstudy.animation.fiter.CameraFilterActivity" />
+        <activity android:name=".openglstudy.animation.camera_filter_watermark.CameraFilterWaterActivity" />
+        <activity android:name=".openglstudy.animation.beauty.BeautyActivity"></activity>
     </application>
 
 </manifest>

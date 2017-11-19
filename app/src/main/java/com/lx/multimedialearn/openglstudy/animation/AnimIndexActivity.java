@@ -8,9 +8,10 @@ import android.support.v7.widget.RecyclerView;
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.main.MainAdapter;
 import com.lx.multimedialearn.main.TabModel;
+import com.lx.multimedialearn.openglstudy.animation.beauty.BeautyActivity;
+import com.lx.multimedialearn.openglstudy.animation.camera_filter_watermark.CameraFilterWaterActivity;
 import com.lx.multimedialearn.openglstudy.animation.cameraetc.AnimOnCameraActivity;
-import com.lx.multimedialearn.openglstudy.animation.filter1.CameraFilterActivity;
-import com.lx.multimedialearn.openglstudy.animation.filter2.CameraFilterWaterActivity;
+import com.lx.multimedialearn.openglstudy.animation.fiter.CameraFilterActivity;
 import com.lx.multimedialearn.openglstudy.animation.loadetc.LoadETCActivity;
 import com.lx.multimedialearn.openglstudy.animation.watermark.CameraWaterMarkActivity;
 
@@ -34,11 +35,11 @@ public class AnimIndexActivity extends AppCompatActivity {
         mRecIndex.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         List<TabModel> list = new ArrayList<>();
         list.add(new TabModel("1. ETC1加载动画-loadetc", "使用ETC加载etc标准的zip包", LoadETCActivity.class));
-        list.add(new TabModel("2. Camera+加载动画-cameraetc", "Camera使用ETC加载etc标准的zip包", AnimOnCameraActivity.class));
+        list.add(new TabModel("2. Camera+动画-cameraetc", "Camera使用ETC加载etc标准的zip包", AnimOnCameraActivity.class));
         list.add(new TabModel("3. 水印-watermark", "使用OpenGL在Camera预览界面加水印", CameraWaterMarkActivity.class));
-        list.add(new TabModel("4. 滤镜-filter1", "在相机预览界面上使用纯滤镜", CameraFilterActivity.class));
-        list.add(new TabModel("5. 水印+滤镜-filter2", "在相机预览界面上加水印，最后加滤镜", CameraFilterWaterActivity.class));
-        list.add(new TabModel("6. 美颜-filter3", "在相机预览界面上美颜", AnimOnCameraActivity.class));
+        list.add(new TabModel("4. 改GLSl实现滤镜-filter", "在相机预览界面上使用纯滤镜", CameraFilterActivity.class));
+        list.add(new TabModel("5. FBO实现水印+滤镜-camera_filter_watermark", "在相机预览界面上加水印，最后加滤镜", CameraFilterWaterActivity.class));
+        list.add(new TabModel("6. 美颜-beauty", "在相机预览界面上美颜", BeautyActivity.class));
         mRecIndex.setAdapter(new MainAdapter(list));
     }
 }

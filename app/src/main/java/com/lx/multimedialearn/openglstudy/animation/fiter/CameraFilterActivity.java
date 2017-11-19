@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.openglstudy.animation.filter2;
+package com.lx.multimedialearn.openglstudy.animation.fiter;
 
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -6,6 +6,8 @@ import android.hardware.Camera;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.utils.CameraUtils;
@@ -16,18 +18,13 @@ import com.lx.multimedialearn.utils.ToastUtils;
 import java.io.IOException;
 
 /**
- * 相机+滤镜1+滤镜2+...+水印
- * 思考1：（不可行）把滤镜加在相机的glsl中，如果同时需要多个滤镜，就没法处理了
- * 思考2:（不可行）相机,水印,滤镜分三层绘画，由于滤镜
- * 思考3：(接近可行)使用FBO，在缓冲区中绘制，下一步拿上一步的Texture处理，并输入最后的纹理，在GLSurfaceView上画出处理后的结果
- * 这里就要封装了，如何把滤镜封装出来
- * 使用FBO：创建Framebuffer，创建TextureBuffer，RenderBuffer，绑定到FrameBuffer，之后渲染都是在Framebuffer上
- * 纹理是在TextureBuffer中，深度检测，模板是在RenderBuffer中，最后在屏幕上把TextureBuffer作为普通的一帧渲染出来
- * 思考4：（可行）相机使用Fbo，创建一个输出，输出传给滤镜，滤镜使用fbo，多重滤镜，绑定两个textureid，轮流换，最后有一个输出，加水印，输出，画出来
+ * 相机+滤镜
+ * 结合openglstudy-image中对bitmap处理的glsl，增加实时滤镜
  */
-public class CameraFilterWaterActivity extends AppCompatActivity {
+public class CameraFilterActivity extends AppCompatActivity {
+
     private GLSurfaceView mGlSurfaceView;
-    private CameraFilterWaterRender mRender;
+    private CameraFilterRenderer mRender;
     private SurfaceTexture mSurfaceTexture; //使用SurfaceTexture承载camera回调数据，渲染到Gl上
     private Camera mCamera;
     private Camera.Parameters mParameters;
@@ -36,15 +33,16 @@ public class CameraFilterWaterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_camera_filter_water);
+        setContentView(R.layout.activity_camera_filter);
         if (!GlUtil.checkGLEsVersion_2(this)) {
             ToastUtils.show(this, "不支持gl 2.0！");
         }
-        mGlSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_filter_water_player);
+        mGlSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_camera_filter_player);
         mTextureID = GlUtil.createCameraTextureID();
         initCamreaParameters();
         mSurfaceTexture = new SurfaceTexture(mTextureID); //surfacetexture用来承载相机的预览数据，绑定到TextureID上，GLSurfaceView拿到ID进行绘画
-        mRender = new CameraFilterWaterRender(this, mSurfaceTexture, mTextureID);
+        mRender = new CameraFilterRenderer(this, mSurfaceTexture, mTextureID);
+        mSurfaceTexture.detachFromGLContext();
         mGlSurfaceView.setEGLContextClientVersion(2);
         mGlSurfaceView.setRenderer(mRender);
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -54,6 +52,50 @@ public class CameraFilterWaterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         mCamera.startPreview();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.camera_filter_activity_menu, menu);
+        return true;
+    }
+
+    private boolean isHalf = false;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_image_config:
+                isHalf = !isHalf;
+                if (isHalf) {
+                    item.setTitle("处理一半");
+                } else {
+                    item.setTitle("全部处理");
+                }
+                mRender.setIsHalf(isHalf);
+                break;
+            case R.id.menu_image_origin:
+                mRender.setInfo(0, new float[]{0.0f, 0.0f, 0.0f});
+                break;
+            case R.id.menu_image_gray:
+                mRender.setInfo(1, new float[]{0.299f, 0.587f, 0.114f});
+                break;
+            case R.id.menu_image_cool:
+                mRender.setInfo(2, new float[]{0.0f, 0.0f, 0.1f});
+                break;
+            case R.id.menu_image_warm:
+                mRender.setInfo(2, new float[]{0.1f, 0.1f, 0.0f});
+                break;
+            case R.id.menu_image_blur:
+                mRender.setInfo(3, new float[]{0.006f, 0.004f, 0.002f});
+                break;
+            case R.id.menu_image_magn:
+                mRender.setInfo(4, new float[]{0.0f, 0.0f, 0.4f});
+                break;
+        }
+        //设置渲染器
+        mGlSurfaceView.requestRender();
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

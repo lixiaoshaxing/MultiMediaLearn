@@ -4,11 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lx.multimedialearn.openglstudy.animation.fiter.CameraFilterActivity">
+    tools:context="com.lx.multimedialearn.openglstudy.animation.beauty.BeautyActivity">
 
     <android.opengl.GLSurfaceView
-        android:id="@+id/glsurface_camera_filter_player"
+        android:id="@+id/glsurface_beauty_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <SeekBar
+        android:id="@+id/seekbar_beauty_flag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="5dp"
+        />
 </FrameLayout>
