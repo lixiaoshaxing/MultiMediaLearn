@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.openglstudy.animation.filter1;
+package com.lx.multimedialearn.openglstudy.animation.fiter;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -23,7 +23,7 @@ import javax.microedition.khronos.opengles.GL10;
  * @author lixiao
  * @since 2017-11-16 16:20
  */
-public class Filter1Renderer implements GLSurfaceView.Renderer {
+public class CameraFilterRenderer implements GLSurfaceView.Renderer {
     private SurfaceTexture mSurfaceTexture; //使用共享，在应用层创建，并传进来获取摄像头数据
     private int mTextureID; //预览Camera画面对应的纹理id，通过该id画图
     private Context mContext;
@@ -31,7 +31,7 @@ public class Filter1Renderer implements GLSurfaceView.Renderer {
     private int type;
     private float[] changeColor = {0.0f, 0.0f, 0.0f};
 
-    public Filter1Renderer(Context context, SurfaceTexture surfaceTexture, int textureID) {
+    public CameraFilterRenderer(Context context, SurfaceTexture surfaceTexture, int textureID) {
         this.mSurfaceTexture = surfaceTexture;
         this.mTextureID = textureID;
         this.mContext = context;
