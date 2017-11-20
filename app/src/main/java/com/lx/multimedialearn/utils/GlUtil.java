@@ -21,6 +21,7 @@ import javax.microedition.khronos.opengles.GL10;
 import static android.opengl.GLES20.GL_COMPILE_STATUS;
 import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
 import static android.opengl.GLES20.GL_LINK_STATUS;
+import static android.opengl.GLES20.GL_TEXTURE_2D;
 import static android.opengl.GLES20.GL_VALIDATE_STATUS;
 import static android.opengl.GLES20.GL_VERTEX_SHADER;
 import static android.opengl.GLES20.glAttachShader;
@@ -254,6 +255,41 @@ public class GlUtil {
                 GLES20.GL_UNSIGNED_BYTE, data);
         GlUtil.checkGlError("loadImageTexture");
 
+        return textureHandle;
+    }
+
+    /**
+     * 创建指定宽高的bitmap纹理id
+     *
+     * @param width
+     * @param height
+     * @param format
+     * @return
+     */
+    public static int createImageTexture(int format, int width, int height) {
+        int[] textureHandles = new int[1];
+        int textureHandle;
+
+        GLES20.glGenTextures(1, textureHandles, 0);
+        textureHandle = textureHandles[0];
+        GlUtil.checkGlError("glGenTextures");
+
+        // Bind the texture handle to the 2D texture target.
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle);
+        // Load the data from the buffer into the texture handle.
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, format, width, height, 0, format,
+                GLES20.GL_UNSIGNED_BYTE, null);
+        // Configure min/mag filtering, i.e. what scaling method do we use if what we're rendering
+        // is smaller or larger than the source image.
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GlUtil.checkGlError("loadImageTexture");
+
+
+        GLES20.glBindTexture(GL_TEXTURE_2D, 0);
+        GlUtil.checkGlError("loadImageTexture");
         return textureHandle;
     }
 
