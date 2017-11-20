@@ -42,7 +42,7 @@ public class BeautyActivity extends AppCompatActivity {
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // mRender.setIntensity(progress/100f);
+                mRender.setIntensity(progress / 100f);
                 mRender.setFlag(progress / 20 + 1);
             }
 

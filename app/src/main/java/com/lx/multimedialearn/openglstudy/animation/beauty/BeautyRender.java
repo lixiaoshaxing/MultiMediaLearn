@@ -1,10 +1,13 @@
 package com.lx.multimedialearn.openglstudy.animation.beauty;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLUtils;
 
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.utils.FileUtils;
@@ -144,6 +147,44 @@ public class BeautyRender implements GLSurfaceView.Renderer {
         this.mixCoef = c;
     }
 
+    /*****************画美颜蒙层，水印可以改为这种方法**********************/
+    private int mLookupProgram;
+    private int mLookupVertexLocation;
+    private int mLookupCoordLocation;
+    private int mLookupMatrixLocation;
+    private int mLookupTexutreLocation; //本来的纹理
+    private int mMaskTextureLocation; //增加美颜的纹理
+    private int mIntensityLocation;
+    private FloatBuffer mLookupVertexBuffer;
+    private FloatBuffer mLookupCoordBuffer;
+    private float[] mLookupVertices = {
+            -1.0f, -1.0f, //左下
+            1.0f, -1.0f, //右下
+            -1.0f, 1.0f, //左上
+            1.0f, 1.0f, //右上
+    };
+    private float[] mLookupTextureCoords = {
+            0.0f, 1.0f, //左下
+            1.0f, 1.0f, //右下
+            0.0f, 0.0f, //左上
+            1.0f, 0.0f, //右上
+    };
+    private float[] mLookupMatrix = {
+            -1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, -1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+    };
+    private float mIntensity = 0.0f;
+    private Bitmap mMaskBitmap;
+
+    /**
+     * 设置蒙版的强度
+     */
+    public void setIntensity(float intensity) {
+        this.mIntensity = intensity;
+    }
+
     /*****************画last texture数据************************/
     private int mLastProgram;
     private int mLastVertexLocation;
@@ -208,7 +249,20 @@ public class BeautyRender implements GLSurfaceView.Renderer {
         //(3)初始化显示的顶点等坐标，在这些坐标范围内显示相机预览数据?
         mBeautyVertexBuffer = GlUtil.createFloatBuffer(mBeautyVertices);
         mBeautyCoordBuffer = GlUtil.createFloatBuffer(mBeautyTextureCoords);
+        /***************准备美颜蒙层的数据***************/
+        String lookUpVertexShader = FileUtils.readTextFileFromResource(mContext, R.raw.last_vertex_shader);
+        String lookUpFragmentShader = FileUtils.readTextFileFromResource(mContext, R.raw.last_fragment_shader);
+        mLookupProgram = GlUtil.createProgram(lookUpVertexShader, lookUpFragmentShader);
+        mLookupVertexLocation = GLES20.glGetAttribLocation(mLookupProgram, "aPosition");
+        mLookupCoordLocation = GLES20.glGetAttribLocation(mLookupProgram, "aCoord");
+        mLookupMatrixLocation = GLES20.glGetUniformLocation(mLookupProgram, "uMatrix");
+        mLookupTexutreLocation = GLES20.glGetUniformLocation(mLookupProgram, "uTexture");
+        mMaskTextureLocation = GLES20.glGetUniformLocation(mLookupProgram, "uMaskTexture");
+        mIntensityLocation = GLES20.glGetUniformLocation(mLookupProgram, "uIntensity");
 
+        mLookupVertexBuffer = GlUtil.createFloatBuffer(mLookupVertices);
+        mLookupCoordBuffer = GlUtil.createFloatBuffer(mLookupTextureCoords);
+        mMaskBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.purity);
         /***************准备last数据*******************/
         String lastVertexShader = FileUtils.readTextFileFromResource(mContext, R.raw.last_vertex_shader);
         String lastFragmentShader = FileUtils.readTextFileFromResource(mContext, R.raw.last_fragment_shader);
@@ -284,6 +338,37 @@ public class BeautyRender implements GLSurfaceView.Renderer {
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glViewport(0, 0, mWidth, mHeight);
 
+        /**************画美颜mask蒙版（水印的方法可以改为这个）**********/
+        int[] lookupFbo = GlUtil.createFBO(mWidth, mHeight);
+        int[] lookupFrameBuffer = new int[]{lookupFbo[0]};
+        int[] lookupRbo = new int[]{lookupFbo[1]};
+        int[] lookupTextureColorBuffer = new int[]{lookupFbo[2]};
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, lookupFrameBuffer[0]);
+        GLES20.glUseProgram(mLookupProgram);
+        GLES20.glViewport(0, 0, mWidth, mHeight);
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+        //放位置，矩阵变换
+        GLES20.glUniformMatrix4fv(mLookupMatrixLocation, 1, false, mLookupMatrix, 0);
+        GLES20.glEnableVertexAttribArray(mLookupVertexLocation);
+        GLES20.glVertexAttribPointer(mLookupVertexLocation, 2, GLES20.GL_FLOAT, false, 0, mLookupVertexBuffer);
+        GLES20.glEnableVertexAttribArray(mLookupCoordLocation);
+        GLES20.glVertexAttribPointer(mLookupCoordLocation, 2, GLES20.GL_FLOAT, false, 0, mLookupCoordBuffer);
+        int maskTextureID = GlUtil.createImageTexture(GLES20.GL_RGBA, 512, 512);//加载mask纹理
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, maskTextureID);
+        if (mMaskBitmap != null && !mMaskBitmap.isRecycled()) {
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, mMaskBitmap, 0);
+            mMaskBitmap.recycle();
+        }
+        GLES20.glUniform1i(mMaskTextureLocation, 1);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0); //把活动的纹理单元设置为纹理单元0
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, beautyTextureColorBuffer[0]);
+        GLES20.glUniform1i(mLookupTexutreLocation, 0); //把纹理单元0传给片元着色器进行渲染
+        GLES20.glUniform1f(mIntensityLocation, mIntensity);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        GLES20.glViewport(0, 0, mWidth, mHeight);
+        GLES20.glDisable(GLES20.GL_BLEND);
         /*************使用last texture画在屏幕上**********************/
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0); //绑定回默认输出buffer，就是屏幕，然后绘画
         GLES20.glUseProgram(mLastProgram);
@@ -294,7 +379,7 @@ public class BeautyRender implements GLSurfaceView.Renderer {
         GLES20.glEnableVertexAttribArray(mLastCoordLocation);
         GLES20.glVertexAttribPointer(mLastCoordLocation, 2, GLES20.GL_FLOAT, false, 0, mLastCoordBuffer);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0); //把活动的纹理单元设置为纹理单元0
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, beautyTextureColorBuffer[0]); //把纹理绑定到纹理单元0上
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, lookupTextureColorBuffer[0]); //把纹理绑定到纹理单元0上
         GLES20.glUniform1i(mTextureLocation, 0); //把纹理单元0传给片元着色器进行渲染
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glViewport(0, 0, mWidth, mHeight);
@@ -305,5 +390,8 @@ public class BeautyRender implements GLSurfaceView.Renderer {
         GLES20.glDeleteTextures(1, beautyTextureColorBuffer, 0);
         GLES20.glDeleteRenderbuffers(1, beautyRbo, 0);
         GLES20.glDeleteFramebuffers(1, beautyFbo, 0);
+        GLES20.glDeleteTextures(1, lookupTextureColorBuffer, 0);
+        GLES20.glDeleteRenderbuffers(1, lookupRbo, 0);
+        GLES20.glDeleteFramebuffers(1, lookupFbo, 0);
     }
 }
