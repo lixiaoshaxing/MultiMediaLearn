@@ -20,6 +20,8 @@ import javax.microedition.khronos.opengles.GL10;
  * 1. 相机预览
  * 2. 水印
  * 3. 灰色蒙层（去texture0中的纹理，即已经渲染的，全部重新渲染）
+ * 绘制到frameBuffer上和绘制到屏幕上的纹理坐标是不一样的， Android屏幕相对GL世界的纹理Y轴翻转
+ * 加一层滤镜就会反转一次，所以多层滤镜需要公用一个变换矩阵，没增加一个滤镜，就要对矩阵进行flip变换
  *
  * @author lixiao
  * @since 2017-11-16 21:35
@@ -45,8 +47,8 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
     private int mWarterMarkPositionHandler;
     private int mWarterMarkTextureCoordHandler;
     private int mWarterMarkMVPMatrixHandler;
-    private FloatBuffer mWMVertexBuffer;
-    private FloatBuffer mWMTextureCoordBuffer;
+    private FloatBuffer mWaterMarkVertexBuffer;
+    private FloatBuffer mWaterMarkTextureCoordBuffer;
     private float mWMVertices[] = {
             -1.0f, -1.0f, //左下
             1.0f, -1.0f, //右下
@@ -59,7 +61,7 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
             0.0f, 0.0f, //左上
             1.0f, 0.0f, //右上
     };
-    private float[] mWMMVP = {
+    private float[] mWaterMarkMatrix = {
             1.0f, 0.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 0.0f, 0.0f,
             0.0f, 0.0f, 1.0f, 0.0f,
@@ -72,8 +74,9 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
     private ShortBuffer mCameradrawListBuffer; // 绘制顺序缓存
     private int mCameraProgram; // OpenGL 可执行程序
     private int mCameraVertexLocation;
-    private int mCameraTextureCoordLocation;
+    private int mCameraTextureCoordLocation; //纹理坐标对应位置
     private int mCameraMatrixLocation;
+    private int mCameraTextureLocation; //纹理对应位置
 
     private short mCameraDrawOrder[] =
             {0, 2, 1, 0, 3, 2}; // 绘制顶点的顺序
@@ -162,6 +165,7 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         mCameraVertexLocation = GLES20.glGetAttribLocation(mCameraProgram, "vPosition");
         mCameraTextureCoordLocation = GLES20.glGetAttribLocation(mCameraProgram, "inputTextureCoordinate");
         mCameraMatrixLocation = GLES20.glGetUniformLocation(mCameraProgram, "uMVPMatrix");
+        mCameraTextureLocation = GLES20.glGetUniformLocation(mCameraProgram, "s_texture");
 
         //(3)初始化显示的顶点等坐标，在这些坐标范围内显示相机预览数据?
         mCameraVertexBuffer = GlUtil.createFloatBuffer(mCameraVertices);
@@ -180,8 +184,8 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         mWarterMarkTextureCoordHandler = GLES20.glGetAttribLocation(mWaterMarkProgram, "aCoord");
         mWarterMarkMVPMatrixHandler = GLES20.glGetUniformLocation(mWaterMarkProgram, "uMatrix");
 
-        mWMVertexBuffer = GlUtil.createFloatBuffer(mWMVertices);
-        mWMTextureCoordBuffer = GlUtil.createFloatBuffer(mWMTextureCoords);
+        mWaterMarkVertexBuffer = GlUtil.createFloatBuffer(mWMVertices);
+        mWaterMarkTextureCoordBuffer = GlUtil.createFloatBuffer(mWMTextureCoords);
         /****************画滤镜数据（灰度）**********************/
         String grayVertexShader = FileUtils.readTextFileFromResource(mContext, R.raw.gray_vertex_shader);
         String grayFragmentShader = FileUtils.readTextFileFromResource(mContext, R.raw.gray_fragment_shader);
@@ -203,6 +207,8 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
 
         mLastVertexBuffer = GlUtil.createFloatBuffer(mLastVertices);
         mLastCoordBuffer = GlUtil.createFloatBuffer(mLastTextureCoords);
+
+        // mLastMatrix = MatrixUtils.flip(mLastMatrix, false, true); //过了两层filter，所以不需要转换了
     }
 
     @Override
@@ -225,12 +231,11 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         /****************进行相机预览，需要一个Fbo，提供输入TextureID**********************/
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBuffer[0]);
         mSurfaceTexture.updateTexImage(); //拿到最新的数据
-        GLES20.glEnable(GLES20.GL_BLEND);
-        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
         //绘制预览数据
         GLES20.glUseProgram(mCameraProgram);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureID);
+        GLES20.glUniform1f(mCameraTextureLocation, 0);
         GLES20.glEnableVertexAttribArray(mCameraVertexLocation);
         GLES20.glVertexAttribPointer(mCameraVertexLocation, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, 0, mCameraVertexBuffer);
         GLES20.glEnableVertexAttribArray(mCameraTextureCoordLocation);
@@ -248,18 +253,17 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         GLES20.glEnable(GLES20.GL_BLEND);
         GLES20.glBlendFunc(GLES20.GL_SRC_COLOR, GLES20.GL_DST_ALPHA);
         //放位置，矩阵变换
-        GLES20.glUniformMatrix4fv(mWarterMarkMVPMatrixHandler, 1, false, mWMMVP, 0);
+        GLES20.glUniformMatrix4fv(mWarterMarkMVPMatrixHandler, 1, false, mWaterMarkMatrix, 0);
         GLES20.glEnableVertexAttribArray(mWarterMarkPositionHandler);
-        GLES20.glVertexAttribPointer(mWarterMarkPositionHandler, 2, GLES20.GL_FLOAT, false, 0, mWMVertexBuffer);
+        GLES20.glVertexAttribPointer(mWarterMarkPositionHandler, 2, GLES20.GL_FLOAT, false, 0, mWaterMarkVertexBuffer);
         GLES20.glEnableVertexAttribArray(mWarterMarkTextureCoordHandler);
-        GLES20.glVertexAttribPointer(mWarterMarkTextureCoordHandler, 2, GLES20.GL_FLOAT, false, 0, mWMTextureCoordBuffer);
+        GLES20.glVertexAttribPointer(mWarterMarkTextureCoordHandler, 2, GLES20.GL_FLOAT, false, 0, mWaterMarkTextureCoordBuffer);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0); //把活动的纹理单元设置为纹理单元0
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mWaterMarkTextureID); //把纹理绑定到纹理单元0上
         GLES20.glUniform1i(mWarterMarkTextureCoordHandler, 0); //把纹理单元0传给片元着色器进行渲染
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glDisable(GLES20.GL_BLEND);
         GLES20.glViewport(0, 0, mWidth, mHeight);
-
 
         /******************渲染灰色蒙层，根据滤镜提供的输出id，重新渲染，提供输出ID*************************************/
         int[] grayFbo = GlUtil.createFBO(mWidth, mHeight);
@@ -268,10 +272,6 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         int[] grayTextureColorBuffer = new int[]{grayFbo[2]};
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, grayFrameBuffer[0]);
         GLES20.glUseProgram(mGrayProgram);
-        GLES20.glViewport(0, 0, mWidth, mHeight);
-//        GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-//        GLES20.glEnable(GLES20.GL_BLEND);
-        GLES20.glBlendFunc(GLES20.GL_SRC_COLOR, GLES20.GL_DST_ALPHA);
         //放位置，矩阵变换
         GLES20.glUniformMatrix4fv(mGrayMatrixLocation, 1, false, mGrayMatrix, 0);
         GLES20.glEnableVertexAttribArray(mGrayVertexLocation);
@@ -282,14 +282,10 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureColorBuffer[0]); //把相机采集的纹理绑定到纹理单元0上
         GLES20.glUniform1i(mGrayCoordLocation, 0); //把纹理单元0传给片元着色器进行渲染
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-        GLES20.glViewport(0, 0, mWidth, mHeight);
-        //GLES20.glDisable(GLES20.GL_BLEND);
-
         //绑定到默认纹理，渲染最后的纹理
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0); //绑定回默认输出buffer，就是屏幕，然后绘画
         /*********************把颜色纹理画出*****************************/
         GLES20.glUseProgram(mLastProgram);
-        GLES20.glViewport(0, 0, mWidth, mHeight);
         GLES20.glUniformMatrix4fv(mLastMatrixLocation, 1, false, mLastMatrix, 0);
         GLES20.glEnableVertexAttribArray(mLastVertexLocation);
         GLES20.glVertexAttribPointer(mLastVertexLocation, 2, GLES20.GL_FLOAT, false, 0, mLastVertexBuffer);
@@ -299,7 +295,6 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, grayTextureColorBuffer[0]); //把纹理绑定到纹理单元0上
         GLES20.glUniform1i(mLastCoordLocation, 0); //把纹理单元0传给片元着色器进行渲染
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-        GLES20.glViewport(0, 0, mWidth, mHeight);
 
         GLES20.glDeleteTextures(1, textureColorBuffer, 0); //先删除
         GLES20.glDeleteRenderbuffers(1, rbo, 0);

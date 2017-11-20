@@ -102,6 +102,15 @@ public class MatrixUtils {
         return m;
     }
 
+    /**
+     * 绘制到frameBuffer上和绘制到屏幕上的纹理坐标是不一样的, Android屏幕相对GL世界的纹理Y轴翻转
+     * 建议：每次进行离屏渲染前，都对matrix进行flip(matrix, false, true),进行变换
+     *
+     * @param m
+     * @param x
+     * @param y
+     * @return
+     */
     public static float[] flip(float[] m, boolean x, boolean y) {
         if (x || y) {
             Matrix.scaleM(m, 0, x ? -1 : 1, y ? -1 : 1, 1);
