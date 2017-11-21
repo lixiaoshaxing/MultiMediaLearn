@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.camerastudy.render.CameraRender;
+import com.lx.multimedialearn.camerastudy.render.CameraRender2;
 import com.lx.multimedialearn.utils.CameraUtils;
 import com.lx.multimedialearn.utils.ScreenUtils;
 
@@ -19,15 +20,19 @@ import java.io.IOException;
 import static com.lx.multimedialearn.utils.GlUtil.createCameraTextureID;
 
 /**
- * 一个Activity上两个GLSurfaceView同时预览摄像头返回的图像
+ * 一个Activity上四个GLSurfaceView同时预览摄像头返回的图像
  * blog：http://blog.sina.com.cn/s/blog_68dc52970102wjhy.html
  */
 public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
 
     private GLSurfaceView mGLOne;
     private GLSurfaceView mGLTwo;
+    private GLSurfaceView mGLThree;
+    private GLSurfaceView mGLFour;
     private CameraRender mRenderOne;
-    private CameraRender mRenderTwo;
+    private CameraRender2 mRenderTwo;
+    private CameraRender2 mRenderThree;
+    private CameraRender mRenderFour; //openglStudy-camera_filter_watermark下的render，模拟小米相机同时预览多个滤镜
     private Button mBtnSwitch;
     private Button mBtnShare;
     boolean isOne = true;
@@ -42,6 +47,8 @@ public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_double_glsurface_view);
         mGLOne = (GLSurfaceView) findViewById(R.id.glsurface_double_one);
         mGLTwo = (GLSurfaceView) findViewById(R.id.glsurface_double_two);
+        mGLThree = (GLSurfaceView) findViewById(R.id.glsurface_double_three);
+        mGLFour = (GLSurfaceView) findViewById(R.id.glsurface_double_four);
         mBtnSwitch = (Button) findViewById(R.id.btn_double_switch);
         mBtnShare = (Button) findViewById(R.id.btn_double_share);
         initCameraParameters(); //初始化摄像头
@@ -53,9 +60,20 @@ public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
         mGLOne.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置刷新模式
 
         mGLTwo.setEGLContextClientVersion(2);
-        mRenderTwo = new CameraRender(this, mSurfaceTexture, mTextureID);
+        mRenderTwo = new CameraRender2(this, mSurfaceTexture, mTextureID);
         mGLTwo.setRenderer(mRenderTwo);
         mGLTwo.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY); //设置刷新模式
+
+        mGLThree.setEGLContextClientVersion(2);
+        mRenderThree = new CameraRender2(this, mSurfaceTexture, mTextureID);
+        mGLThree.setRenderer(mRenderThree);
+        mGLThree.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY); //设置刷新模式
+
+        mGLFour.setEGLContextClientVersion(2);
+        mRenderFour = new CameraRender(this, mSurfaceTexture, mTextureID);
+        mGLFour.setRenderer(mRenderFour);
+        mGLFour.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY); //设置刷新模式
+
 
         mBtnSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,10 +81,14 @@ public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
                 if (isOne) {
                     mGLOne.onResume();
                     mGLTwo.onPause();
+                    mGLThree.onPause();
+                    mGLFour.onResume();
                     isOne = false;
                 } else {
                     mGLOne.onPause();
                     mGLTwo.onResume();
+                    mGLThree.onResume();
+                    mGLFour.onPause();
                     isOne = true;
                 }
             }
@@ -77,6 +99,8 @@ public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mGLOne.onResume();
                 mGLTwo.onResume();
+                mGLThree.onResume();
+                mGLFour.onResume();
             }
         });
     }
@@ -131,6 +155,12 @@ public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
         if (mGLTwo != null) {
             mGLTwo.onResume();
         }
+        if (mGLThree != null) {
+            mGLThree.onResume();
+        }
+        if (mGLFour != null) {
+            mGLFour.onResume();
+        }
     }
 
     @Override
@@ -141,6 +171,12 @@ public class DoubleGLSurfaceViewActivity extends AppCompatActivity {
         }
         if (mGLTwo != null) {
             mGLTwo.onPause();
+        }
+        if (mGLThree != null) {
+            mGLThree.onPause();
+        }
+        if (mGLFour != null) {
+            mGLFour.onPause();
         }
         if (mCamera != null) {
             mCamera.stopPreview();
