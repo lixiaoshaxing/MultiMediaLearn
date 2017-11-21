@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.lx.multimedialearn.R;
+import com.lx.multimedialearn.openglstudy.obj.render.ObjMtlRender;
 import com.lx.multimedialearn.utils.GlUtil;
 import com.lx.multimedialearn.utils.ToastUtils;
 

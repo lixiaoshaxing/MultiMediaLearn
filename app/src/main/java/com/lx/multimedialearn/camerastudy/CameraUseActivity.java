@@ -103,7 +103,7 @@ public class CameraUseActivity extends AppCompatActivity implements View.OnClick
                 startPreviewOnGlSurfaceView(); //使用GlSurfaceView进行预览
                 break;
             case R.id.btn_camera_double_glsurface:
-                Intent intent = new Intent(CameraUseActivity.this, DoubleGLSurfaceViewActivity.class);
+                Intent intent = new Intent(CameraUseActivity.this, FourGLSurfaceViewActivity.class);
                 CameraUseActivity.this.startActivity(intent);
                 break;
             case R.id.btn_camera_double_share:

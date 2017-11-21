@@ -32,10 +32,10 @@
         <activity android:name=".bmpstudy.DrawBmpActivity" />
         <activity android:name=".camerastudy.CameraUseActivity" />
         <activity android:name=".camerastudy.CameraShareActivity" />
-        <activity android:name=".camerastudy.DoubleGLSurfaceViewActivity" />
+        <activity android:name=".camerastudy.FourGLSurfaceViewActivity" />
         <activity android:name=".mediastudy.videoplayer.VideoPlayerActivity" />
-        <activity android:name=".openglstudy.OpenGLStudyActivity" />
-        <activity android:name=".openglstudy.ParticlesActivity" />
+        <activity android:name=".openglstudy.hockey.HockeyActivity" />
+        <activity android:name=".openglstudy.particles.ParticlesActivity" />
 
         <service
             android:name=".openglstudy.wallpaper.GLWallpaperService"
@@ -65,7 +65,8 @@
         <activity android:name=".openglstudy.animation.watermark.CameraWaterMarkActivity" />
         <activity android:name=".openglstudy.animation.fiter.CameraFilterActivity" />
         <activity android:name=".openglstudy.animation.camera_filter_watermark.CameraFilterWaterActivity" />
-        <activity android:name=".openglstudy.animation.beauty.BeautyActivity"></activity>
+        <activity android:name=".openglstudy.animation.beauty.BeautyActivity" />
+        <activity android:name=".camerastudy.CameraIndexActivity"></activity>
     </application>
 
 </manifest>
