@@ -53,7 +53,7 @@
 
         <activity android:name=".openglstudy.OpenGLIndexActivity" />
         <activity android:name=".openglstudy.image.ImageProcessActivity" />
-        <activity android:name=".openglstudy.fbo.FBOStudyActivity" />
+        <activity android:name=".openglstudy.xbo.fbo.FBOStudyActivity" />
         <activity android:name=".openglstudy.animation.AnimIndexActivity" />
         <activity android:name=".openglstudy.animation.loadetc.LoadETCActivity" />
         <activity android:name=".openglstudy.animation.cameraetc.AnimOnCameraActivity" />
@@ -66,7 +66,9 @@
         <activity android:name=".openglstudy.animation.fiter.CameraFilterActivity" />
         <activity android:name=".openglstudy.animation.camera_filter_watermark.CameraFilterWaterActivity" />
         <activity android:name=".openglstudy.animation.beauty.BeautyActivity" />
-        <activity android:name=".camerastudy.CameraIndexActivity"></activity>
+        <activity android:name=".camerastudy.CameraIndexActivity" />
+        <activity android:name=".openglstudy.xbo.XboIndexActivity" />
+        <activity android:name=".openglstudy.xbo.vbo.VBOActivity"></activity>
     </application>
 
 </manifest>

@@ -98,38 +98,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <LinearLayout
+            <Button
+                android:id="@+id/btn_camera_take_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|bottom"
-                android:background="#22ffffff"
-                android:orientation="vertical">
+                android:text="拍照"
+                android:textColor="#000000"
+                android:textSize="13sp" />
 
-                <Button
-                    android:id="@+id/btn_camera_take_photo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="拍照"
-                    android:textColor="#000000"
-                    android:textSize="13sp" />
-
-                <Button
-                    android:id="@+id/btn_camera_double_share"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="共享"
-                    android:textColor="#000000"
-                    android:textSize="13sp" />
-
-                <Button
-                    android:id="@+id/btn_camera_double_glsurface"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="双GLSurface"
-                    android:textColor="#000000"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
         </FrameLayout>
     </LinearLayout>
 
