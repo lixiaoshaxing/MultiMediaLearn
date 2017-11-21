@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.SeekBar;
 
 import com.lx.multimedialearn.R;
+import com.lx.multimedialearn.openglstudy.stl.render.ModelRenderer;
 import com.lx.multimedialearn.utils.WeakHandler;
 
 /**

@@ -11,7 +11,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.bmpstudy.DrawBmpActivity;
-import com.lx.multimedialearn.camerastudy.CameraUseActivity;
+import com.lx.multimedialearn.camerastudy.CameraIndexActivity;
 import com.lx.multimedialearn.mediastudy.MediaIndexActivity;
 import com.lx.multimedialearn.openglstudy.OpenGLIndexActivity;
 import com.lx.multimedialearn.utils.PermissionUtils;
@@ -42,10 +42,10 @@ public class MainActivity extends AppCompatActivity {
         PermissionUtils.checkPermission(this);
         mRecContent = (RecyclerView) findViewById(R.id.rec_main_content);
         mRecContent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        list.add(new TabModel("1. Bitmap处理-bmpstudy", "在Android平台绘制一张图片，使用多种不同的API，ImageView，SurfaceView，自定义View，GlSurfaceView，TextureView等", DrawBmpActivity.class));
-        list.add(new TabModel("2. Camera使用-camerastudy", "分别使用SurfaceView、TextureView、GLSurfaceView来预览Camera+数据，取到NV21的数据回调,双GLSurfaceView等，并总结Android图形图像架构", CameraUseActivity.class));
-        list.add(new TabModel("3. 音视频播放-mediastudy", "分别使用SurfaceView、TextureView、GLSurfaceView播放mp4文件", MediaIndexActivity.class));
-        list.add(new TabModel("4. OpenGl的学习-openglstudy", "OpenGL入门，开发空气曲棍球游戏，动态桌面等,Camera+，水印，美颜，滤镜，加载3D模型等", OpenGLIndexActivity.class));
+        list.add(new TabModel("1. Bitmap处理", "在Android平台绘制一张图片，使用多种不同的API，ImageView，SurfaceView，自定义View，GlSurfaceView，TextureView等", DrawBmpActivity.class));
+        list.add(new TabModel("2. Camera使用", "分别使用SurfaceView、TextureView、GLSurfaceView来预览Camera+数据，取到NV21的数据回调,双GLSurfaceView等，并总结Android图形图像架构", CameraIndexActivity.class));
+        list.add(new TabModel("3. 音视频播放", "分别使用SurfaceView、TextureView、GLSurfaceView播放mp4文件", MediaIndexActivity.class));
+        list.add(new TabModel("4. OpenGl的学习", "OpenGL入门，开发空气曲棍球游戏，动态桌面等,Camera+，水印，美颜，滤镜，加载3D模型等", OpenGLIndexActivity.class));
         mRecContent.setAdapter(new MainAdapter(list));
     }
 

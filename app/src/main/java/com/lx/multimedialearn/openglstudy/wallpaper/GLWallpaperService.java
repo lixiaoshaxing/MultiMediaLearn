@@ -9,7 +9,7 @@ import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 
-import com.lx.multimedialearn.openglstudy.render.ParticlesRender;
+import com.lx.multimedialearn.openglstudy.particles.render.ParticlesRender;
 
 /**
  * 动态壁纸服务
