@@ -5,13 +5,17 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.os.Environment;
 
 import com.lx.multimedialearn.R;
+import com.lx.multimedialearn.utils.BitmapUtils;
 import com.lx.multimedialearn.utils.FileUtils;
 import com.lx.multimedialearn.utils.GlUtil;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -22,6 +26,7 @@ import javax.microedition.khronos.opengles.GL10;
  * 3. 灰色蒙层（去texture0中的纹理，即已经渲染的，全部重新渲染）
  * 绘制到frameBuffer上和绘制到屏幕上的纹理坐标是不一样的， Android屏幕相对GL世界的纹理Y轴翻转
  * 加一层滤镜就会反转一次，所以多层滤镜需要公用一个变换矩阵，没增加一个滤镜，就要对矩阵进行flip变换
+ * 4. 在glsl中把rgb转换为yuv
  *
  * @author lixiao
  * @since 2017-11-16 21:35
@@ -127,6 +132,36 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
             0.0f, 0.0f, 0.0f, 1.0f
     };
 
+    /*****************在gpu中rgb转yuv******************************/
+    private int mYuvProgram;
+    private int mYuvVertexLocation;
+    private int mYuvTextureCoordLocation;
+    private int mYuvMatrixLocation;
+    private int mYuvTextureLocation;
+    private int mYuvWidthLocation;
+    private int mYuvheightLocation;
+
+    private FloatBuffer mYuvVertexBuffer;
+    private FloatBuffer mYuvCoordBuffer;
+    private float[] mYuvVertices = {
+            -1.0f, -1.0f, //左下
+            1.0f, -1.0f, //右下
+            -1.0f, 1.0f, //左上
+            1.0f, 1.0f, //右上
+    };
+    private float[] mYuvTextureCoords = {
+            0.0f, 1.0f, //左下
+            1.0f, 1.0f, //右下
+            0.0f, 0.0f, //左上
+            1.0f, 0.0f, //右上
+    };
+    private float[] mYuvMatrix = {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+    };
+
     /*****************渲染到屏幕上用的last数据*************************/
     private int mLastProgram;
     private int mLastVertexLocation;
@@ -152,6 +187,28 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
             0.0f, 0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f
     };
+
+    /******************读取FBO中缓存，存储在本地*********************/
+    private LinkedBlockingQueue<ByteBuffer> mYuvQueue = new LinkedBlockingQueue<>();
+    private Thread mThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            for (; ; ) {
+                ByteBuffer bf;
+                try {
+                    bf = mYuvQueue.take();
+
+                    if (bf != null) {
+                        BitmapUtils.saveRgb2Bitmap(bf, Environment.getExternalStorageDirectory().getAbsolutePath() + "/gl_dump_" + mWidth + "_" + mHeight + ".png", mWidth, mHeight);
+                    }
+                    mYuvQueue.clear();
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    });
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -197,6 +254,20 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         mGrayVertexBuffer = GlUtil.createFloatBuffer(mGrayVertices);
         mGrayCoordBuffer = GlUtil.createFloatBuffer(mGrayTextureCoords);
 
+        /***************准备rgb转yuv数据**********************/
+        //仍然是画texture，根据rgb调整每一个点的值，存储yuv值
+        String yuvVertexShader = FileUtils.readTextFileFromResource(mContext, R.raw.yuv_vertex_shader);
+        String yuvFragmentShader = FileUtils.readTextFileFromResource(mContext, R.raw.yuv_fragment_shader);
+        mYuvProgram = GlUtil.createProgram(yuvVertexShader, yuvFragmentShader);
+        mYuvVertexLocation = GLES20.glGetAttribLocation(mYuvProgram, "aPosition");
+        mYuvTextureCoordLocation = GLES20.glGetAttribLocation(mYuvProgram, "aCoord");
+        mYuvMatrixLocation = GLES20.glGetUniformLocation(mYuvProgram, "uMatrix");
+        mYuvTextureLocation = GLES20.glGetAttribLocation(mYuvProgram, "uTexture");
+        mYuvWidthLocation = GLES20.glGetUniformLocation(mYuvProgram, "uWidth");
+        mYuvheightLocation = GLES20.glGetUniformLocation(mYuvProgram, "uHeight");
+
+        mYuvVertexBuffer = GlUtil.createFloatBuffer(mYuvVertices);
+        mYuvCoordBuffer = GlUtil.createFloatBuffer(mYuvTextureCoords);
         /***************准备last数据*************************/
         String lastVertexShader = FileUtils.readTextFileFromResource(mContext, R.raw.last_vertex_shader);
         String lastFragmentShader = FileUtils.readTextFileFromResource(mContext, R.raw.last_fragment_shader);
@@ -209,6 +280,8 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         mLastCoordBuffer = GlUtil.createFloatBuffer(mLastTextureCoords);
 
         // mLastMatrix = MatrixUtils.flip(mLastMatrix, false, true); //过了两层filter，所以不需要转换了
+        /****************准备yuv数据发送线程********************/
+        mThread.start();
     }
 
     @Override
@@ -284,6 +357,33 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         //绑定到默认纹理，渲染最后的纹理
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0); //绑定回默认输出buffer，就是屏幕，然后绘画
+
+        /*********************在glsl中转换为YUV数据**********************/
+        int[] yuvFbo = GlUtil.createFBO(mWidth, mHeight);
+        int[] yuvFrameBuffer = new int[]{yuvFbo[0]};
+        int[] yuvRbo = new int[]{yuvFbo[1]};
+        int[] yuvTextureColorBuffer = new int[]{yuvFbo[2]};
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, yuvFrameBuffer[0]);
+        GLES20.glUseProgram(mYuvProgram);
+        //放位置，矩阵变换
+        GLES20.glUniformMatrix4fv(mYuvMatrixLocation, 1, false, mYuvMatrix, 0);
+        GLES20.glEnableVertexAttribArray(mYuvVertexLocation);
+        GLES20.glVertexAttribPointer(mYuvVertexLocation, 2, GLES20.GL_FLOAT, false, 0, mYuvVertexBuffer);
+        GLES20.glEnableVertexAttribArray(mYuvTextureCoordLocation);
+        GLES20.glVertexAttribPointer(mYuvTextureCoordLocation, 2, GLES20.GL_FLOAT, false, 0, mYuvCoordBuffer);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0); //把活动的纹理单元设置为纹理单元0
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureColorBuffer[0]); //把相机采集的纹理绑定到纹理单元0上
+        GLES20.glUniform1i(mYuvTextureLocation, 0); //把纹理单元0传给片元着色器进行渲染
+        GLES20.glUniform1f(mYuvWidthLocation, mWidth);
+        GLES20.glUniform1f(mYuvheightLocation, mHeight);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        //绑定到默认纹理，渲染最后的纹理
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0); //绑定回默认输出buffer，就是屏幕，然后绘画
+        //glReadPixels从FrameBuffer中读取转换好的yuv数据，传送出去，适合处理视频，不适合直播
+//        ByteBuffer bf = ByteBuffer.allocateDirect(mWidth * mHeight * 4);
+//        //读取的是FrameBuffer中的数据
+//        GLES20.glReadPixels(0, 0, mWidth, mHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, bf);
+//        mYuvQueue.offer(bf);
         /*********************把颜色纹理画出*****************************/
         GLES20.glUseProgram(mLastProgram);
         GLES20.glUniformMatrix4fv(mLastMatrixLocation, 1, false, mLastMatrix, 0);
@@ -302,5 +402,8 @@ public class CameraFilterWaterRender implements GLSurfaceView.Renderer {
         GLES20.glDeleteTextures(1, grayTextureColorBuffer, 0); //先删除
         GLES20.glDeleteRenderbuffers(1, grayRbo, 0);
         GLES20.glDeleteFramebuffers(1, grayFbo, 0);
+        GLES20.glDeleteTextures(1, yuvTextureColorBuffer, 0); //先删除
+        GLES20.glDeleteRenderbuffers(1, yuvRbo, 0);
+        GLES20.glDeleteFramebuffers(1, yuvFbo, 0);
     }
 }

@@ -38,7 +38,7 @@ public class AnimIndexActivity extends AppCompatActivity {
         list.add(new TabModel("2. Camera+动画-cameraetc", "Camera使用ETC加载etc标准的zip包", AnimOnCameraActivity.class));
         list.add(new TabModel("3. 水印-watermark", "使用OpenGL在Camera预览界面加水印", CameraWaterMarkActivity.class));
         list.add(new TabModel("4. 改GLSl实现滤镜-filter", "在相机预览界面上使用纯滤镜", CameraFilterActivity.class));
-        list.add(new TabModel("5. FBO实现水印+滤镜-camera_filter_watermark", "在相机预览界面上加水印，最后加滤镜", CameraFilterWaterActivity.class));
+        list.add(new TabModel("5. FBO实现水印+滤镜+gpu转yuv-camera_filter_watermark", "在相机预览界面上加水印，最后加滤镜，在gpu中转yuv，可以推送，存储处理过后的数据", CameraFilterWaterActivity.class));
         list.add(new TabModel("6. 美颜-beauty", "在相机预览界面上美颜", BeautyActivity.class));
         mRecIndex.setAdapter(new MainAdapter(list));
     }

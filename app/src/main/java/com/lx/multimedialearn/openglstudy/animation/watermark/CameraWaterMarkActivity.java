@@ -85,6 +85,7 @@ public class CameraWaterMarkActivity extends AppCompatActivity {
             @Override
             public void onPreviewFrame(final byte[] data, final Camera camera) {
                 mCamera.addCallbackBuffer(buffers);//这里能够接收到在预览界面上的数据，NV21格式即yuv420sp
+                //对于data，使用离屏渲染，转换为yuv，发送出去，不从这里发送数据，在onDrawFrame中发数据
             }
         });
     }
