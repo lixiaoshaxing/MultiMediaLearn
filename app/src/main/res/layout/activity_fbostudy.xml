@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.lx.multimedialearn.openglstudy.fbo.FBOStudyActivity">
+    tools:context="com.lx.multimedialearn.openglstudy.xbo.fbo.FBOStudyActivity">
 
     <SurfaceView
         android:id="@+id/surface_fbostudy"

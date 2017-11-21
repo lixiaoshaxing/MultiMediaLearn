@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.openglstudy.fbo;
+package com.lx.multimedialearn.openglstudy.xbo.fbo;
 
 import android.content.Context;
 import android.graphics.Bitmap;

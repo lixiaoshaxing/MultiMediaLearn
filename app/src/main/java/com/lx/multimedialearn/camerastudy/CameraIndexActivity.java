@@ -20,7 +20,7 @@ public class CameraIndexActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_index);
-        mRecContent = (RecyclerView) findViewById(R.id.rec_opengl_index);
+        mRecContent = (RecyclerView) findViewById(R.id.rec_camera_index);
         mRecContent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         List<TabModel> list = new ArrayList<>();
         list.add(new TabModel("1. Camera使用", "Camera结合SurfaceView，GLSurfaceView，TextureView使用", CameraUseActivity.class));

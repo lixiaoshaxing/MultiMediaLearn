@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.openglstudy.fbo;
+package com.lx.multimedialearn.openglstudy.xbo.fbo;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +16,10 @@ import com.lx.multimedialearn.utils.BitmapUtils;
 
 import java.nio.IntBuffer;
 
+/**
+ * 1. 创建EGL上下文
+ * 2. 创建EGLSurfaceView渲染数据
+ */
 public class FBOStudyActivity extends AppCompatActivity {
     private GLRender mRender;
     private SurfaceView mSurfaceView;

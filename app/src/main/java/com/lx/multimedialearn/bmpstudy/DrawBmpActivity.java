@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.bmpstudy.render.BmpRender;
+import com.lx.multimedialearn.bmpstudy.view.CustomBmpView;
 import com.lx.multimedialearn.utils.GlUtil;
 import com.lx.multimedialearn.utils.ScreenUtils;
 

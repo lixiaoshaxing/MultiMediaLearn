@@ -1,6 +1,5 @@
 package com.lx.multimedialearn.camerastudy;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -44,8 +43,6 @@ public class CameraUseActivity extends AppCompatActivity implements View.OnClick
     private Button mBtnTexture; //切换
     private Button mBtnGLSurface; //切换
     private ImageView mImgPhoto; //拍照后预览图片
-    private Button mBtnShare; //共享摄像头，同时预览
-    private Button mBtnDoubleGLSurface; //双GLSurfaceView预览
     private Button mBtnPhoto; //点击拍照，三种view拍照方式一样
 
     private Camera mCamera;
@@ -65,8 +62,6 @@ public class CameraUseActivity extends AppCompatActivity implements View.OnClick
         mBtnTexture = (Button) findViewById(R.id.btn_camera_texture);
         mBtnGLSurface = (Button) findViewById(R.id.btn_camera_glsurface);
         mImgPhoto = (ImageView) findViewById(R.id.img_camera_photo);
-        mBtnShare = (Button) findViewById(R.id.btn_camera_double_share);
-        mBtnDoubleGLSurface = (Button) findViewById(R.id.btn_camera_double_glsurface);
         mBtnPhoto = (Button) findViewById(R.id.btn_camera_take_photo);
         initGLSurfaceView(); //GLSurfaceView必须设置Render，防止crash
 
@@ -74,8 +69,6 @@ public class CameraUseActivity extends AppCompatActivity implements View.OnClick
         mBtnSurface.setOnClickListener(this);
         mBtnTexture.setOnClickListener(this);
         mBtnGLSurface.setOnClickListener(this);
-        mBtnDoubleGLSurface.setOnClickListener(this);
-        mBtnShare.setOnClickListener(this);
         mBtnPhoto.setOnClickListener(this);
     }
 
@@ -101,14 +94,6 @@ public class CameraUseActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.btn_camera_glsurface:
                 startPreviewOnGlSurfaceView(); //使用GlSurfaceView进行预览
-                break;
-            case R.id.btn_camera_double_glsurface:
-                Intent intent = new Intent(CameraUseActivity.this, FourGLSurfaceViewActivity.class);
-                CameraUseActivity.this.startActivity(intent);
-                break;
-            case R.id.btn_camera_double_share:
-                Intent intent2 = new Intent(CameraUseActivity.this, CameraShareActivity.class);
-                CameraUseActivity.this.startActivity(intent2);
                 break;
             case R.id.btn_camera_take_photo:
                 takePhotoOnView();
