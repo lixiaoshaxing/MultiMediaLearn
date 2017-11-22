@@ -24,8 +24,6 @@ public class FBOStudyActivity extends AppCompatActivity {
     private GLRender mRender;
     private SurfaceView mSurfaceView;
     private ImageView mImageView;
-    private int mWidth;
-    private int mHeight;
     private Handler mHandler;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
