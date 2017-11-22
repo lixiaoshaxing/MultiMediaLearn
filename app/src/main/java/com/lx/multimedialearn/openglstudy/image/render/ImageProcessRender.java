@@ -110,7 +110,7 @@ public class ImageProcessRender implements GLSurfaceView.Renderer {
         uChangeColorLocation = GLES20.glGetUniformLocation(mProgram, "uChangeColor");
         uXYLocation = GLES20.glGetUniformLocation(mProgram, "uXY");
 
-        texture = GlUtil.loadTexture(mContext, R.drawable.p);//加载默认图片
+        texture = GlUtil.createImageTexture(mContext, R.drawable.p);//加载默认图片
 
         GLES20.glVertexAttribPointer(
                 aPositionLocation,
@@ -180,7 +180,7 @@ public class ImageProcessRender implements GLSurfaceView.Renderer {
 
         //加载图片纹理
         if (!TextUtils.isEmpty(mPath)) {
-            texture = GlUtil.loadTexture(mContext, mPath);
+            texture = GlUtil.createImageTexture(mContext, mPath);
         }
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0); //把活动的纹理单元设置为纹理单元0
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture[0]); //把纹理绑定到纹理单元0上

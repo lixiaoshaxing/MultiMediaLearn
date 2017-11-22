@@ -117,7 +117,7 @@ public class ParticlesRender implements GLSurfaceView.Renderer {
                 new Geometry.Point(1f, 0f, 0f),
                 particleDirector, Color.rgb(5, 50, 255), angleVarianceInDegree, speedVariance);
 
-        int[] temp = GlUtil.loadTexture(context, R.drawable.particle_texture);
+        int[] temp = GlUtil.createImageTexture(context, R.drawable.particle_texture);
         particleTexture = temp[0];
 
         //初始化天空图
