@@ -6,4 +6,9 @@
     android:layout_height="match_parent"
     tools:context="com.lx.multimedialearn.openglstudy.xbo.vbo.VBOActivity">
 
+    <android.opengl.GLSurfaceView
+        android:id="@+id/glsurface_vbo_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </FrameLayout>

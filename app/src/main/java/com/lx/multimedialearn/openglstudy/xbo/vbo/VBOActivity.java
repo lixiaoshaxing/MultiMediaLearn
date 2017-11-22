@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.lx.multimedialearn.R;
+import com.lx.multimedialearn.openglstudy.xbo.vbo.render.VBORender;
+import com.lx.multimedialearn.utils.GlUtil;
+import com.lx.multimedialearn.utils.ToastUtils;
 
 /**
  * VBO使用
@@ -13,12 +16,22 @@ import com.lx.multimedialearn.R;
  */
 public class VBOActivity extends AppCompatActivity {
 
-    GLSurfaceView mGLSurfaceView;
+    private GLSurfaceView mGLSurfaceView;
+    private VBORender mRender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vbo);
-
+        mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_vbo_player);
+        if (!GlUtil.checkGLEsVersion_2(this)) {
+            ToastUtils.show(this, "不支持OpenGL 2.0");
+            finish();
+            return;
+        }
+        mGLSurfaceView.setEGLContextClientVersion(2);
+        mRender = new VBORender(this);
+        mGLSurfaceView.setRenderer(mRender);
+        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
 }
