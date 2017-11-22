@@ -115,10 +115,10 @@ public class MultiTextureRenderer implements GLSurfaceView.Renderer {
         mLightMapLoc = GLES20.glGetUniformLocation(mProgramObject, "s_lightMap");
 
         // Load the texture
-        int[] temp1 = GlUtil.loadTexture(mContext, R.drawable.p);
+        int[] temp1 = GlUtil.createImageTexture(mContext, R.drawable.p);
         mBaseMapTexId = temp1[0];
 
-        temp1 = GlUtil.loadTexture(mContext, R.drawable.q);
+        temp1 = GlUtil.createImageTexture(mContext, R.drawable.q);
         mLightMapTexId = temp1[0];
 
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

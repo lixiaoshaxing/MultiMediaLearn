@@ -122,7 +122,7 @@ public class CameraWaterMarkRender implements GLSurfaceView.Renderer {
         mTextureCoordsBuffer = GlUtil.createFloatBuffer(mTextureCoords);
         drawListBuffer = GlUtil.createShortBuffer(drawOrder);
         /*****************画水印的数据***********************/
-        int[] temp = GlUtil.loadTexture(mContext, R.drawable.logo); //可以获取textureid，宽高
+        int[] temp = GlUtil.createImageTexture(mContext, R.drawable.logo); //可以获取textureid，宽高
         mWaterMarkTextureID = temp[0];
         mBitmapWidth = temp[1];
         mBitmapHeight = temp[2];

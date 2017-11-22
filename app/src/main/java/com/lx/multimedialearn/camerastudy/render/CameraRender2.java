@@ -195,7 +195,7 @@ public class CameraRender2 implements GLSurfaceView.Renderer {
         mCameraTextureCoordsBuffer = GlUtil.createFloatBuffer(mCameraTextureCoords);
         mCameradrawListBuffer = GlUtil.createShortBuffer(mCameraDrawOrder);
         /*****************画水印的数据***********************/
-        int[] temp = GlUtil.loadTexture(mContext, R.drawable.logo); //可以获取textureid，宽高
+        int[] temp = GlUtil.createImageTexture(mContext, R.drawable.logo); //可以获取textureid，宽高
         mWaterMarkTextureID = temp[0];
         mBitmapWidth = temp[1];
         mBitmapHeight = temp[2];

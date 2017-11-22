@@ -82,7 +82,7 @@ public class VBORender implements GLSurfaceView.Renderer {
         mCoordBuffer = GlUtil.createFloatBuffer(mTextureCoords);
 
         //加载一张图片，创建纹理，加载图片，返回id
-        int[] temp = GlUtil.loadTexture(mContext, R.drawable.p);
+        int[] temp = GlUtil.createImageTexture(mContext, R.drawable.p);
         mTextureID = temp[0];
     }
 

@@ -302,7 +302,7 @@ public class GlUtil {
      * @param resourceId
      * @return
      */
-    public static int[] loadTexture(Context context, int resourceId) {
+    public static int[] createImageTexture(Context context, int resourceId) {
         int[] textureInfo = new int[3];
         GLES20.glGenTextures(1, textureInfo, 0); //生成纹理对象id
         if (textureInfo[0] == 0) {
@@ -344,7 +344,7 @@ public class GlUtil {
      * @param path
      * @return
      */
-    public static int[] loadTexture(Context context, String path) {
+    public static int[] createImageTexture(Context context, String path) {
         int[] textureInfo = new int[3];
         GLES20.glGenTextures(1, textureInfo, 0); //生成纹理对象id
         if (textureInfo[0] == 0) {

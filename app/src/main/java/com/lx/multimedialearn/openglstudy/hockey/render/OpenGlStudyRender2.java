@@ -83,7 +83,7 @@ public class OpenGlStudyRender2 implements GLSurfaceView.Renderer {
         textureShaderProgram = new TextureShaderProgram(context);
         colorShaderProgram = new ColorShaderProgram(context);
 
-        int[] temp = GlUtil.loadTexture(context, R.drawable.air_hockey_surface);
+        int[] temp = GlUtil.createImageTexture(context, R.drawable.air_hockey_surface);
         texture = temp[0];
         //设置蓝色木槌的默认位置
         blueMalletPosition = new Geometry.Point(0f, mallet.height / 2f, 0.4f);
