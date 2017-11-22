@@ -68,7 +68,8 @@
         <activity android:name=".openglstudy.animation.beauty.BeautyActivity" />
         <activity android:name=".camerastudy.CameraIndexActivity" />
         <activity android:name=".openglstudy.xbo.XboIndexActivity" />
-        <activity android:name=".openglstudy.xbo.vbo.VBOActivity"></activity>
+        <activity android:name=".openglstudy.xbo.vbo.VBOActivity" />
+        <activity android:name=".openglstudy.xbo.pbo.PBOActivity"></activity>
     </application>
 
 </manifest>
