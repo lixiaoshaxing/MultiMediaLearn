@@ -1,23 +1,32 @@
 package com.lx.multimedialearn.openglstudy.xbo.pbo;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.utils.FileUtils;
 import com.lx.multimedialearn.utils.GlUtil;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * 使用vbo
- * 1. 申请存储空间
- * 2. 存储顶点数据
- * 3. 直接从gpu中读取数据
+ * 使用PBO
+ * 1. 初始化PBO
+ * 2. 加载纹理到PBO
+ * 3. PBO传送给OpenGL，OpenGL处理（渲染到屏幕上）
+ * 4. OpenGL传送数据给PBO
+ * 5. PBO映射到内存
+ * 6. 内存加载bitmap，展示
  *
  * @author lixiao
  * @since 2017-11-22 10:58
@@ -37,6 +46,7 @@ public class PBORender implements GLSurfaceView.Renderer {
     private int mTextureID;
     private FloatBuffer mVertexBuffer;
     private FloatBuffer mCoordBuffer;
+    private int mPBOBufferID;
     private float[] mVertices = {
             -1.0f, -1.0f, //左下
             1.0f, -1.0f, //右下
@@ -58,6 +68,7 @@ public class PBORender implements GLSurfaceView.Renderer {
 
     private int mVBOVertexBuffer; //使用VBO
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -70,7 +81,6 @@ public class PBORender implements GLSurfaceView.Renderer {
         mMatrixLocation = GLES20.glGetUniformLocation(mProgram, "uMatrix");
         mTextureLocation = GLES20.glGetUniformLocation(mProgram, "uTexture");
 
-        //mVertexBuffer = GlUtil.createFloatBuffer(mVertices); 使用本地内存，下边使用VBO，缓存到GPU中
         int[] buffers = new int[1];
         GLES20.glGenBuffers(buffers.length, buffers, 0); //生成bufferid
         mVBOVertexBuffer = buffers[0];
@@ -82,8 +92,40 @@ public class PBORender implements GLSurfaceView.Renderer {
         mCoordBuffer = GlUtil.createFloatBuffer(mTextureCoords);
 
         //加载一张图片，创建纹理，加载图片，返回id
-        int[] temp = GlUtil.createImageTexture(mContext, R.drawable.p);
-        mTextureID = temp[0];
+        // int[] temp = GlUtil.createImageTexture(mContext, R.drawable.p); //传统的使用texImage2D加载，占用cpu时间
+        int[] textureID = new int[1];
+        GLES20.glGenTextures(1, textureID, 0);
+        mTextureID = textureID[0];
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureID);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+
+        int[] pboBuffer = new int[1];
+        GLES20.glGenBuffers(1, pboBuffer, 0); //创建pbo，申请pbo空间
+        mPBOBufferID = pboBuffer[0];
+        GLES20.glBindBuffer(GLES30.GL_PIXEL_UNPACK_BUFFER, mPBOBufferID);//绑定后，加载的纹理都会加载到pbo中
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.p);
+        int size = bitmap.getHeight() * bitmap.getWidth() * 4;
+        GLES20.glBufferData( //根据图片需要大小，在gpu上申请空间
+                GLES30.GL_PIXEL_UNPACK_BUFFER,  //用来向OpenGL上传
+                size, //空间大小
+                null,  //这里设置为null，初始化为空
+                GLES30.GL_STREAM_DRAW); //表示当前要向texture写内容
+
+        ByteBuffer buffer = (ByteBuffer) GLES30.glMapBufferRange(
+                GLES30.GL_PIXEL_UNPACK_BUFFER,
+                0,
+                size,
+                GLES30.GL_MAP_WRITE_BIT); //可以向缓冲区中存内容
+        //获取空间在内存上映射的地址
+        bitmap.copyPixelsToBuffer(buffer); //加载原始图片到pbo
+        GLES30.glUnmapBuffer(GLES30.GL_PIXEL_UNPACK_BUFFER); //解除绑定pbo，清空pbo中的数据
+
+        GLES30.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, bitmap.getWidth(), bitmap.getHeight(), 0, GLES20.GL_RGBA,
+                GLES20.GL_UNSIGNED_BYTE, null); //加载纹理到texture上
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
 
     @Override
@@ -99,7 +141,6 @@ public class PBORender implements GLSurfaceView.Renderer {
         GLES20.glUseProgram(mProgram);
         GLES20.glUniformMatrix4fv(mMatrixLocation, 1, false, mMatrix, 0);
         GLES20.glEnableVertexAttribArray(mVertexLocation);
-        //GLES20.glVertexAttribPointer(mVertexLocation, 2, GLES20.GL_FLOAT, false, 0, mVertexBuffer); //读取内存，效率低
         //使用vbo
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBOVertexBuffer); //绑定id，表示要使用
         GLES20.glEnableVertexAttribArray(mVertexLocation); //
@@ -113,5 +154,18 @@ public class PBORender implements GLSurfaceView.Renderer {
         GLES20.glUniform1i(mTextureLocation, 0); //把纹理单元0传给片元着色器进行渲染
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
+    }
+
+    private onBitmapUpdateListener mListener;
+
+    public void setListener(onBitmapUpdateListener listener) {
+        this.mListener = listener;
+    }
+
+    /**
+     * 图片生成后回调
+     */
+    public interface onBitmapUpdateListener {
+        void update(Bitmap bitmap);
     }
 }
