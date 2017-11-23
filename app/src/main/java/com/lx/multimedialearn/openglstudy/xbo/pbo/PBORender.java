@@ -1,4 +1,4 @@
-package com.lx.multimedialearn.openglstudy.xbo.vbo.render;
+package com.lx.multimedialearn.openglstudy.xbo.pbo;
 
 import android.content.Context;
 import android.opengl.GLES20;
@@ -22,10 +22,10 @@ import javax.microedition.khronos.opengles.GL10;
  * @author lixiao
  * @since 2017-11-22 10:58
  */
-public class VBORender implements GLSurfaceView.Renderer {
+public class PBORender implements GLSurfaceView.Renderer {
     private Context mContext;
 
-    public VBORender(Context context) {
+    public PBORender(Context context) {
         this.mContext = context;
     }
 

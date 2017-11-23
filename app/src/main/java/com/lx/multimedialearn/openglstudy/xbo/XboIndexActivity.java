@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.main.MainAdapter;
 import com.lx.multimedialearn.main.TabModel;
-import com.lx.multimedialearn.openglstudy.xbo.fbo.FBOStudyActivity;
+import com.lx.multimedialearn.openglstudy.xbo.fbo.FBOActivity;
 import com.lx.multimedialearn.openglstudy.xbo.vbo.VBOActivity;
 
 import java.util.ArrayList;
@@ -28,8 +28,8 @@ public class XboIndexActivity extends AppCompatActivity {
         mRecContent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         List<TabModel> list = new ArrayList<>();
         list.add(new TabModel("1. VBO使用", "VBO GPU中开辟空间缓存顶点数据，减少读取内存占用CPU时间", VBOActivity.class));
-        list.add(new TabModel("2. PBO使用", "GPU读取纹理，减少占用DMA时间", FBOStudyActivity.class));
-        list.add(new TabModel("3. FBO使用", "FBO离屏渲染，双缓冲，EGL上下文，EGLSurfaceView，多重滤镜", FBOStudyActivity.class));
+        list.add(new TabModel("2. PBO使用", "GPU读取纹理，减少占用DMA时间", FBOActivity.class));
+        list.add(new TabModel("3. FBO使用", "FBO离屏渲染，双缓冲，EGL上下文，EGLSurfaceView，多重滤镜", FBOActivity.class));
         mRecContent.setAdapter(new MainAdapter(list));
     }
 }
