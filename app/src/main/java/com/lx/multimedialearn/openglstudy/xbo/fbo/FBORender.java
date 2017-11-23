@@ -41,7 +41,7 @@ import java.nio.IntBuffer;
  * @author lixiao
  * @since 2017-11-05 13:24
  */
-public class GLRender extends HandlerThread {
+public class FBORender extends HandlerThread {
     private Context mContext;
 
     private EGLConfig eglConfig = null;
@@ -54,7 +54,7 @@ public class GLRender extends HandlerThread {
      *
      * @param context
      */
-    public GLRender(Context context) {
+    public FBORender(Context context) {
         super("GLThread");
         this.mContext = context;
     }
