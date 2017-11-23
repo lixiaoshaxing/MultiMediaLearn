@@ -27,6 +27,7 @@ public class OpenGLIndexActivity extends AppCompatActivity {
 
     private RecyclerView mRecContent;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
