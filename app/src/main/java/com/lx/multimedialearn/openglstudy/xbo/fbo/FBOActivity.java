@@ -20,7 +20,7 @@ import java.nio.IntBuffer;
  * 1. 创建EGL上下文
  * 2. 创建EGLSurfaceView渲染数据
  */
-public class FBOStudyActivity extends AppCompatActivity {
+public class FBOActivity extends AppCompatActivity {
     private FBORender mRender;
     private SurfaceView mSurfaceView;
     private ImageView mImageView;
@@ -61,7 +61,7 @@ public class FBOStudyActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap temp = BitmapFactory.decodeResource(FBOStudyActivity.this.getResources(), R.drawable.q);
+                        Bitmap temp = BitmapFactory.decodeResource(FBOActivity.this.getResources(), R.drawable.q);
                         Bitmap result = BitmapUtils.frame2Bitmap(temp.getWidth(), temp.getHeight(), data);
                         mImageView.setImageBitmap(result);
                     }
