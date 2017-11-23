@@ -37,7 +37,7 @@ public class OpenGLIndexActivity extends AppCompatActivity {
         list.add(new TabModel("1. 冰球游戏", "基本图形绘制，基本概念学习，触控，线性代数等", HockeyActivity.class));
         list.add(new TabModel("2. 粒子喷泉", "粒子系统，天空盒，动态壁纸，陀螺仪，光照，高度图等", ParticlesActivity.class));
         list.add(new TabModel("3. 图片处理", "OpenGL处理图片，色调，放大，虚化等", ImageProcessActivity.class));
-        list.add(new TabModel("4. VBO,PBO,FBO", "VBO,PBO,FBO，EGL上下文", XboIndexActivity.class));
+        list.add(new TabModel("4. VBO，PBO，FBO", "VBO，PBO，FBO，EGL上下文", XboIndexActivity.class));
         list.add(new TabModel("5. 相机，动画，滤镜，美颜，水印", "解析ETC，逐帧渲染动画，滤镜，美颜，水印", AnimIndexActivity.class));
         list.add(new TabModel("6. STL模型数据加载", "解析stl模型数据，加载3D图形", STLModelActivity.class));
         list.add(new TabModel("7. OBJ 3D模型加载", "解析Obj模型数据，加载3D图形", ObjModelActivity.class));
