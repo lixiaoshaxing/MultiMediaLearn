@@ -152,7 +152,7 @@ public class PBORender implements GLSurfaceView.Renderer {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0); //把活动的纹理单元设置为纹理单元0
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureID); //把纹理绑定到纹理单元0上
         GLES20.glUniform1i(mTextureLocation, 0); //把纹理单元0传给片元着色器进行渲染
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4); //数据处理完后，使用readPiex
 
     }
 
