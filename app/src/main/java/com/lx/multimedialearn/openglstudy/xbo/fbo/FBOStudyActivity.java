@@ -21,7 +21,7 @@ import java.nio.IntBuffer;
  * 2. 创建EGLSurfaceView渲染数据
  */
 public class FBOStudyActivity extends AppCompatActivity {
-    private GLRender mRender;
+    private FBORender mRender;
     private SurfaceView mSurfaceView;
     private ImageView mImageView;
     private Handler mHandler;
@@ -33,7 +33,7 @@ public class FBOStudyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fbostudy);
         mSurfaceView = (SurfaceView) findViewById(R.id.surface_fbostudy);
         mImageView = (ImageView) findViewById(R.id.img_fbostudy);
-        mRender = new GLRender(this);
+        mRender = new FBORender(this);
         mRender.start(); //开启线程，创建上下文，准备绘制
         mHandler = new Handler(mRender.getLooper()); //需要mRender处理，则追加到其消息队列里
         mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() { //使用SurfaceView进行展示
@@ -55,7 +55,7 @@ public class FBOStudyActivity extends AppCompatActivity {
             public void surfaceDestroyed(SurfaceHolder holder) {
             }
         });
-        mRender.setmCallback(new GLRender.Callback() { //离屏渲染完成后的回调
+        mRender.setmCallback(new FBORender.Callback() { //离屏渲染完成后的回调
             @Override
             public void onBitmapGenerated(final IntBuffer data) {
                 runOnUiThread(new Runnable() {
