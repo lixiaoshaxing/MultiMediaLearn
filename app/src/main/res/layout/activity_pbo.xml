@@ -7,7 +7,7 @@
     tools:context="com.lx.multimedialearn.openglstudy.xbo.pbo.PBOActivity">
 
     <android.opengl.GLSurfaceView
-        android:id="@+id/glsurface_pbo_playerf"
+        android:id="@+id/glsurface_pbo_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
