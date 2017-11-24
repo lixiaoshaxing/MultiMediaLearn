@@ -27,7 +27,7 @@ public class PBOActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pbo);
         mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glsurface_pbo_player);
-     //   mImgView = (ImageView) findViewById(R.id.img_pbo_show);
+        mImgView = (ImageView) findViewById(R.id.img_pbo_show);
         if (!GlUtil.checkGLEsVersion_2(this)) {
             ToastUtils.show(this, "不支持OpenGL 2.0");
             finish();
@@ -36,7 +36,7 @@ public class PBOActivity extends AppCompatActivity {
         mGLSurfaceView.setEGLContextClientVersion(2);
         mRender = new PBORender(this);
         mGLSurfaceView.setRenderer(mRender);
-        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         mRender.setListener(new PBORender.onBitmapUpdateListener() {
             @Override
             public void update(final Bitmap bitmap) {
@@ -44,11 +44,12 @@ public class PBOActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (bitmap != null) { //为什么Bitmap必须是final，
-
+                            mImgView.setImageBitmap(bitmap);
                         }
                     }
                 });
             }
         });
+        mGLSurfaceView.requestRender();
     }
 }

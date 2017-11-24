@@ -33,6 +33,8 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class PBORender implements GLSurfaceView.Renderer {
     private Context mContext;
+    private int mWidth;
+    private int mheight;
 
     public PBORender(Context context) {
         this.mContext = context;
@@ -108,6 +110,8 @@ public class PBORender implements GLSurfaceView.Renderer {
         GLES20.glBindBuffer(GLES30.GL_PIXEL_UNPACK_BUFFER, mPBOBufferID);//绑定后，加载的纹理都会加载到pbo中
         Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.p);
         int size = bitmap.getHeight() * bitmap.getWidth() * 4;
+        mWidth = bitmap.getWidth();
+        mheight = bitmap.getHeight();
         GLES20.glBufferData( //根据图片需要大小，在gpu上申请空间
                 GLES30.GL_PIXEL_UNPACK_BUFFER,  //用来向OpenGL上传
                 size, //空间大小
@@ -134,6 +138,7 @@ public class PBORender implements GLSurfaceView.Renderer {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
@@ -154,6 +159,37 @@ public class PBORender implements GLSurfaceView.Renderer {
         GLES20.glUniform1i(mTextureLocation, 0); //把纹理单元0传给片元着色器进行渲染
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4); //数据处理完后，使用readPiex
 
+        //创建pbo，绑定pbo，读取数据到pbo，映射到内存，展示到ImageView上
+        int[] pboBuffer = new int[1];
+        GLES30.glGenBuffers(1, pboBuffer, 0);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, pboBuffer[0]);
+        //初始化宽高，考虑字节对齐
+        //OpenGLES默认应该是4字节对齐应，但是不知道为什么在索尼Z2上效率反而降低
+        //并且跟ImageReader最终计算出来的rowStride也和我这样计算出来的不一样，这里怀疑跟硬件和分辨率有关
+        //这里默认取得128的倍数，这样效率反而高，为什么？
+        int align = 128;//128字节对齐
+        int mPixelStride = 4;
+        int mRowStride = (mWidth * mPixelStride + (align - 1)) & ~(align - 1); //字节对齐
+
+        int mPboSize = mRowStride * mheight;
+
+        GLES30.glBufferData(
+                GLES30.GL_PIXEL_PACK_BUFFER,
+                mPboSize,
+                null,
+                GLES30.GL_STATIC_READ);
+
+//        //int x,int y,int width,int height,int format,int type,int offset
+      //  GLES20.glReadPixels(0, 0, mRowStride , mheight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
+
+        //映射
+        ByteBuffer bf = (ByteBuffer) GLES30.glMapBufferRange(GLES30.GL_PIXEL_PACK_BUFFER, 0, mPboSize, GLES30.GL_MAP_READ_BIT);
+        GLES30.glUnmapBuffer(GLES30.GL_PIXEL_PACK_BUFFER);
+        Bitmap bitmap = Bitmap.createBitmap(mRowStride / mPixelStride, mheight, Bitmap.Config.ARGB_8888);
+        bitmap.copyPixelsFromBuffer(bf);
+        if (mListener != null) {
+            mListener.update(bitmap);
+        }
     }
 
     private onBitmapUpdateListener mListener;
