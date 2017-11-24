@@ -177,7 +177,7 @@ public class PBORender implements GLSurfaceView.Renderer {
                 GLES30.GL_PIXEL_PACK_BUFFER,
                 mPboSize,
                 null,
-                GLES30.GL_STATIC_READ); //从OpenGL中读数据到PBO
+                GLES30.GL_STATIC_READ); // 从OpenGL中读数据到PBO
 
 //        //int x,int y,int width,int height,int format,int type,int offset
       //  GLES20.glReadPixels(0, 0, mRowStride , mheight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
