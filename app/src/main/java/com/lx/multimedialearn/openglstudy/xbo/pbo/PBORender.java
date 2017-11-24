@@ -180,8 +180,7 @@ public class PBORender implements GLSurfaceView.Renderer {
                 GLES30.GL_STATIC_READ); //从OpenGL中读数据到PBO
 
 //        //int x,int y,int width,int height,int format,int type,int offset
-        GLES20.glReadPixels(0, 0, mRowStride, mheight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
-
+        GLES20.glReadPixels(0, 0, mRowStride, mheight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);//这里是错的
         //映射
         ByteBuffer bf = (ByteBuffer) GLES30.glMapBufferRange(GLES30.GL_PIXEL_PACK_BUFFER, 0, mPboSize, GLES30.GL_MAP_READ_BIT);
         GLES30.glUnmapBuffer(GLES30.GL_PIXEL_PACK_BUFFER);
