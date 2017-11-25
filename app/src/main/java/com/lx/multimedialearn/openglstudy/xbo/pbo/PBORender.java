@@ -2,7 +2,6 @@ package com.lx.multimedialearn.openglstudy.xbo.pbo;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
@@ -10,6 +9,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 
 import com.lx.multimedialearn.R;
+import com.lx.multimedialearn.openglstudy.OpenGLJniUtils;
 import com.lx.multimedialearn.utils.FileUtils;
 import com.lx.multimedialearn.utils.GlUtil;
 
@@ -27,6 +27,8 @@ import javax.microedition.khronos.opengles.GL10;
  * 4. OpenGL传送数据给PBO
  * 5. PBO映射到内存
  * 6. 内存加载bitmap，展示
+ * blog: PBO中读取 http://www.jianshu.com/p/3bc4db687546，读取后的bitmap为BGRA转ARGB，需要转换
+ * PBO综述：http://blog.csdn.net/panda1234lee/article/details/51546502
  *
  * @author lixiao
  * @since 2017-11-22 10:58
@@ -94,48 +96,61 @@ public class PBORender implements GLSurfaceView.Renderer {
         mCoordBuffer = GlUtil.createFloatBuffer(mTextureCoords);
 
         //加载一张图片，创建纹理，加载图片，返回id
-        // int[] temp = GlUtil.createImageTexture(mContext, R.drawable.p); //传统的使用texImage2D加载，占用cpu时间
-        int[] textureID = new int[1];
-        GLES20.glGenTextures(1, textureID, 0);
-        mTextureID = textureID[0];
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureID);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-
-        int[] pboBuffer = new int[1];
-        GLES20.glGenBuffers(1, pboBuffer, 0); //创建pbo，申请pbo空间
-        mPBOBufferID = pboBuffer[0];
-        GLES20.glBindBuffer(GLES30.GL_PIXEL_UNPACK_BUFFER, mPBOBufferID);//绑定后，加载的纹理都会加载到pbo中
-        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.p);
-        int size = bitmap.getHeight() * bitmap.getWidth() * 4;
-        mWidth = bitmap.getWidth();
-        mheight = bitmap.getHeight();
-        GLES20.glBufferData( //根据图片需要大小，在gpu上申请空间
-                GLES30.GL_PIXEL_UNPACK_BUFFER,  //用来向OpenGL上传
-                size, //空间大小
-                null,  //这里设置为null，初始化为空
-                GLES30.GL_STREAM_DRAW); //表示当前要向texture写内容
-
-        ByteBuffer buffer = (ByteBuffer) GLES30.glMapBufferRange(
-                GLES30.GL_PIXEL_UNPACK_BUFFER,
-                0,
-                size,
-                GLES30.GL_MAP_WRITE_BIT); //可以向缓冲区中存内容
-        //获取空间在内存上映射的地址
-        bitmap.copyPixelsToBuffer(buffer); //加载原始图片到pbo
-        GLES30.glUnmapBuffer(GLES30.GL_PIXEL_UNPACK_BUFFER); //解除绑定pbo，清空pbo中的数据
-
-        GLES30.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, bitmap.getWidth(), bitmap.getHeight(), 0, GLES20.GL_RGBA,
-                GLES20.GL_UNSIGNED_BYTE, null); //加载纹理到texture上
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        int[] temp = GlUtil.createImageTexture(mContext, R.drawable.q); //传统的使用texImage2D加载，占用cpu时间
+        mTextureID = temp[0];
+//        int[] textureID = new int[1];
+//        GLES20.glGenTextures(1, textureID, 0);
+//        mTextureID = textureID[0];
+//        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureID);
+//        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+//        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+//        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+//        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+//
+//        int[] pboBuffer = new int[1];
+//        GLES20.glGenBuffers(1, pboBuffer, 0); //创建pbo，申请pbo空间
+//        mPBOBufferID = pboBuffer[0];
+//        GLES20.glBindBuffer(GLES30.GL_PIXEL_UNPACK_BUFFER, mPBOBufferID);//绑定后，加载的纹理都会加载到pbo中
+//        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.q);
+//        int size = bitmap.getHeight() * bitmap.getWidth() * 4;
+//        mWidth = bitmap.getWidth();
+//        mheight = bitmap.getHeight();
+//        GLES20.glBufferData( //根据图片需要大小，在gpu上申请空间
+//                GLES30.GL_PIXEL_UNPACK_BUFFER,  //用来向OpenGL上传
+//                size, //空间大小
+//                null,  //这里设置为null，初始化为空
+//                GLES30.GL_STREAM_DRAW); //表示当前要向texture写内容
+//
+//        ByteBuffer buffer = (ByteBuffer) GLES30.glMapBufferRange(
+//                GLES30.GL_PIXEL_UNPACK_BUFFER,
+//                0,
+//                size,
+//                GLES30.GL_MAP_WRITE_BIT); //可以向缓冲区中存内容
+//        //获取空间在内存上映射的地址
+//        bitmap.copyPixelsToBuffer(buffer); //加载原始图片到pbo
+//        GLES30.glUnmapBuffer(GLES30.GL_PIXEL_UNPACK_BUFFER); //解除绑定pbo，清空pbo中的数据
+//
+//        GLES30.glTexImage2D( //绑定到OpenGL纹理
+//                GLES20.GL_TEXTURE_2D,
+//                0,
+//                GLES20.GL_RGBA,
+//                bitmap.getWidth(),
+//                bitmap.getHeight(),
+//                0,
+//                GLES20.GL_RGBA,
+//                GLES20.GL_UNSIGNED_BYTE,
+//                null); //加载纹理到texture上
+//        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
+
+    int width;
+    int height;
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0, 0, width, height); //图像要放的位置
-
+        this.width = width;
+        this.height = height;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -162,16 +177,15 @@ public class PBORender implements GLSurfaceView.Renderer {
         //创建pbo，绑定pbo，读取数据到pbo，映射到内存，展示到ImageView上
         int[] pboBuffer = new int[1];
         GLES30.glGenBuffers(1, pboBuffer, 0);
-        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, pboBuffer[0]);
+        GLES30.glBindBuffer(GLES30.GL_PIXEL_PACK_BUFFER, pboBuffer[0]);
         //初始化宽高，考虑字节对齐
         //OpenGLES默认应该是4字节对齐应，但是不知道为什么在索尼Z2上效率反而降低
         //并且跟ImageReader最终计算出来的rowStride也和我这样计算出来的不一样，这里怀疑跟硬件和分辨率有关
         //这里默认取得128的倍数，这样效率反而高，为什么？
         int align = 128;//128字节对齐
         int mPixelStride = 4;
-        int mRowStride = (mWidth * mPixelStride + (align - 1)) & ~(align - 1); //字节对齐
-
-        int mPboSize = mRowStride * mheight;
+        int mRowStride = (width * mPixelStride + (align - 1)) & ~(align - 1); //字节对齐
+        int mPboSize = mRowStride * height;
 
         GLES30.glBufferData(
                 GLES30.GL_PIXEL_PACK_BUFFER,
@@ -179,16 +193,51 @@ public class PBORender implements GLSurfaceView.Renderer {
                 null,
                 GLES30.GL_STATIC_READ); //从OpenGL中读数据到PBO
 
-//        //int x,int y,int width,int height,int format,int type,int offset
-        GLES20.glReadPixels(0, 0, mRowStride, mheight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);//这里是错的,测试git设置
-        //映射
+        //使用GLES20不能读取到PBO，GL30需要target>24，使用Jni调用本地方法，调用Opengl本地方法，图片没有a通道，rgba到argb需要转换
+        OpenGLJniUtils.glReadPixels(0, 0, mRowStride / mPixelStride, height, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE);
+
         ByteBuffer bf = (ByteBuffer) GLES30.glMapBufferRange(GLES30.GL_PIXEL_PACK_BUFFER, 0, mPboSize, GLES30.GL_MAP_READ_BIT);
         GLES30.glUnmapBuffer(GLES30.GL_PIXEL_PACK_BUFFER);
-        Bitmap bitmap = Bitmap.createBitmap(mRowStride / mPixelStride, mheight, Bitmap.Config.ARGB_8888);
+
+        //读取出来为倒置的BGRA，需要转换为ARGB
+        //int[] result = bgra2argb(bf, width, height, mPixelStride, mRowStride);
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bitmap.copyPixelsFromBuffer(bf);
         if (mListener != null) {
             mListener.update(bitmap);
         }
+    }
+
+    /**
+     * 读取出来为倒置的BGRA，需要转换为ARGB
+     * 转换成Bitmap演示用效率低下，可以用libyuv代替
+     *
+     * @param buffer
+     * @return
+     */
+    private int[] bgra2argb(ByteBuffer buffer, int width, int height, int pixelStride, int rowStride) {
+        byte[] data = new byte[rowStride * height]; //buffer实际大小是这两个的乘积
+        buffer.get(data);
+        int[] resultData = new int[width * height];
+        int offset = 0;
+        int index = 0;
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                int pixel = 0;
+                pixel |= (data[offset] & 0xff) << 16;     // R
+                pixel |= (data[offset + 1] & 0xff) << 8;  // G
+                pixel |= (data[offset + 2] & 0xff);       // B
+                pixel |= (data[offset + 3] & 0xff) << 24; // A
+                resultData[index++] = pixel;
+                offset += 4;
+            }
+            offset += rowStride - width * pixelStride;
+        }
+
+//        ByteBuffer bf = ByteBuffer.allocateDirect(width * height * 4);
+//        IntBuffer intBuffer = bf.asIntBuffer();
+//        intBuffer.put(resultData);
+        return resultData;
     }
 
     private onBitmapUpdateListener mListener;

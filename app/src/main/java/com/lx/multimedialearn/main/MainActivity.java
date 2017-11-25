@@ -31,10 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecContent;
     List<TabModel> list = new ArrayList<>();
 
-    static {
-        System.loadLibrary("native-lib");
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +73,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    public native String stringFromJNI();
 }

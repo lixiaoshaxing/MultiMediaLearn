@@ -136,4 +136,20 @@ public class BitmapUtils {
         Log.i("sys.out", "glReadPixel时间：" + (end - start));
         BitmapUtils.saveRgb2Bitmap(byteBuffer, Environment.getExternalStorageDirectory().getAbsolutePath() + "/gl_dump_" + width + "_" + height + ".png", width, height);
     }
+
+    /**
+     * 从gpu中读取bitmap
+     *
+     * @param width
+     * @param height
+     * @return
+     */
+    public static Bitmap getBitmap(int width, int height) {
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(width * height * 4);
+        byteBuffer.position(0);
+        GLES20.glReadPixels(0, 0, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, byteBuffer);
+        Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bmp.copyPixelsFromBuffer(byteBuffer);
+        return bmp;
+    }
 }
