@@ -84,7 +84,7 @@ public class CameraUtils {
      * @param cameraId
      * @param camera
      */
-    public static void setCameraDisplayOrientation(Context context, int cameraId, android.hardware.Camera camera) {
+    public static int setCameraDisplayOrientation(Context context, int cameraId, android.hardware.Camera camera) {
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(cameraId, info);
         //这里要确保是Activity，WindowManager属于Activity
@@ -114,6 +114,7 @@ public class CameraUtils {
             result = (info.orientation - degrees + 360) % 360;
         }
         camera.setDisplayOrientation(result);
+        return result;
     }
 
     /**

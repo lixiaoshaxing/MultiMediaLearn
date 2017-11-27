@@ -53,7 +53,7 @@ public class BitmapUtils {
 
     //图片保存
     public static void saveBitmap(Bitmap b) {
-        String path = Environment.getExternalStorageDirectory() + "/bmp/";
+        String path = Environment.getExternalStorageDirectory() + "/abc/";
         File folder = new File(path);
         if (!folder.exists() && !folder.mkdirs()) {
             //runOnUiThread,保存图片一般在子线程

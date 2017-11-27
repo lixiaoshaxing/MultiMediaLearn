@@ -69,7 +69,8 @@
         <activity android:name=".camerastudy.CameraIndexActivity" />
         <activity android:name=".openglstudy.xbo.XboIndexActivity" />
         <activity android:name=".openglstudy.xbo.vbo.VBOActivity" />
-        <activity android:name=".openglstudy.xbo.pbo.PBOActivity"></activity>
+        <activity android:name=".openglstudy.xbo.pbo.PBOActivity" />
+        <activity android:name=".mediastudy.mediarecord.MediaRecordActivity"></activity>
     </application>
 
 </manifest>

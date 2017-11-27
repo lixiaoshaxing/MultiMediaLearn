@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -19,9 +20,20 @@ import java.io.InputStreamReader;
  * 文件的读取，输出
  *
  * @author lixiao
- * @since 2017-09-20 10:44
+ * @since 2017-09-20 10:45
  */
 public class FileUtils {
+
+    /**
+     * 创建通用文件夹，并返回通用文件夹地址
+     */
+    public static String createCommonDir() {
+        File file = new File(Environment.getExternalStorageDirectory(), "/abc/");
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        return file.getAbsolutePath();
+    }
 
     /**
      * 保存Bitmap的byte数组到文件中
