@@ -32,6 +32,12 @@ public class FileUtils {
         if (!file.exists()) {
             file.mkdir();
         }
+        if (file.listFiles().length > 10) { //如果超过10个文件，清空
+            File[] lists = file.listFiles();
+            for (File temp : lists) {
+                temp.delete();
+            }
+        }
         return file.getAbsolutePath();
     }
 
