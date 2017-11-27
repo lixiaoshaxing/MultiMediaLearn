@@ -8,6 +8,7 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -36,6 +37,9 @@ public class MediaRecordActivity extends AppCompatActivity implements View.OnCli
     private Button mBtnPlayer; //播放
     private Camera mCamera;
     private Camera.Parameters mParameters;
+    private int mCameraRotation = 0;
+    private MediaRecorder mRecorder;
+    private String mPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,16 +51,13 @@ public class MediaRecordActivity extends AppCompatActivity implements View.OnCli
         mBtnPlayer = (Button) findViewById(R.id.btn_media_record_play);
         mBtnRecord.setOnClickListener(this);
         mBtnPlayer.setOnClickListener(this);
-
-        startPreview();
+        initCamera();
     }
-
-    int mCameraRotation = 0;
 
     /**
      * 设置相机参数，开始预览
      */
-    private void startPreview() {
+    private void initCamera() {
         mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT); //这里可以进行前后置摄像头
         mParameters = mCamera.getParameters();
         Camera.Size supportPreviewSize = CameraUtils.getSupportPreviewSize(mCamera, ScreenUtils.getScreenWidth(this) / 2 - 50);
@@ -67,8 +68,41 @@ public class MediaRecordActivity extends AppCompatActivity implements View.OnCli
         mParameters.setPictureFormat(ImageFormat.JPEG);
         mParameters.setFocusMode(CameraUtils.getSupportFocusMode(mCamera)); //对焦模式需要优化
         mCamera.setParameters(mParameters);
+
         mCameraRotation = CameraUtils.setCameraDisplayOrientation(this, Camera.CameraInfo.CAMERA_FACING_FRONT, mCamera);
+        int bitsPerPixel = ImageFormat.getBitsPerPixel(mParameters.getPreviewFormat()); //这里需要搞清楚WithBuffer和直接callback的区别
+        final byte[] buffers = new byte[supportPreviewSize.width * supportPreviewSize.height * bitsPerPixel / 8]; //官方建议这么设置
+        mCamera.addCallbackBuffer(buffers);
+        mCamera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() { //设置回调几个方法的区别：http://blog.csdn.net/lb377463323/article/details/53338045
+            @Override
+            public void onPreviewFrame(final byte[] data, final Camera camera) {
+                mCamera.addCallbackBuffer(buffers);//这里能够接收到在预览界面上的数据，NV21格式即yuv420sp
+            }
+        });
+        mSurfaceViewPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                mCamera.stopPreview();
+                try {
+                    mCamera.setPreviewDisplay(mSurfaceViewPreview.getHolder());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mCamera.startPreview();
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+
+            }
+        });
     }
+
 
     @Override
     public void onClick(View v) {
@@ -90,9 +124,6 @@ public class MediaRecordActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
     }
-
-    private MediaRecorder mRecorder;
-    private String mPath;
 
     /**
      * 开始进行录制
