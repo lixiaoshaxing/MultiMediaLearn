@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.lx.multimedialearn.R;
 
 /**
- * 使用硬编码：AudioRecord，Camera，MediaCodec，MediaMutex录制视频
+ * 使用硬编码：Camera，AudioRecord，MediaCodec，MediaMutex录制视频
  * 1. 视频采集，处理
  * 2. 音频采集，处理
  * 3. 音视频合并，同步

@@ -84,7 +84,7 @@ public class MediaRecordActivity extends AppCompatActivity implements View.OnCli
             public void surfaceCreated(SurfaceHolder holder) {
                 mCamera.stopPreview();
                 try {
-                    mCamera.setPreviewDisplay(mSurfaceViewPreview.getHolder());
+                    mCamera.setPreviewDisplay(mSurfaceViewPreview.getHolder()); //必须在Surfaceview初始化之后才能预览
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -135,28 +135,27 @@ public class MediaRecordActivity extends AppCompatActivity implements View.OnCli
         String currentTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File file = new File(FileUtils.createCommonDir(), "VID" + currentTime + ".mp4");
         mPath = file.getAbsolutePath();
-        mRecorder = new MediaRecorder();
+        mRecorder = new MediaRecorder(); //初始化
         mCamera.unlock(); //设置自定义Camera之前，必须unLock，Camera可以被录制使用
-        mRecorder.setCamera(mCamera);
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-        mRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
+        mRecorder.setCamera(mCamera); //设置自定义相机
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC); //设置音频来源
+        mRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA); //设置视频来源
+        mRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P)); //设置输入格式，480p，可以通过下边注释的参数自定义格式，如果自定义这一行需要注释掉
         mRecorder.setOrientationHint(360 - mCameraRotation); //前置摄像头需要调整，还有镜面
-//        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-//        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-//        // 设置图像编码的格式
-//        mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-//        mRecorder.setVideoSize(1280, 720);
-//        mRecorder.setVideoEncodingBitRate(8);
-//        mRecorder.setVideoFrameRate(20);
-        mRecorder.setOutputFile(file.getAbsolutePath());
-        mRecorder.setPreviewDisplay(mSurfaceViewPreview.getHolder().getSurface());
+//        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); //设置输出为mp4格式
+//        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB); //设置音频编码格式
+//        mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);// 设置视频编码的格式为h264，所有移动设备都支持
+//        mRecorder.setVideoSize(1280, 720); //设置视频大小
+//        mRecorder.setVideoEncodingBitRate(8); //这个参数不明白，设置每一个像素点的位数？
+//        mRecorder.setVideoFrameRate(20); //设置帧率
+        mRecorder.setOutputFile(file.getAbsolutePath()); //设置录制后输出地址
+        mRecorder.setPreviewDisplay(mSurfaceViewPreview.getHolder().getSurface()); //设置预览SurfaceView
         try {
-            mRecorder.prepare();
+            mRecorder.prepare(); //准备，必须在SurfaceView创建后
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mRecorder.start();
+        mRecorder.start(); //录制
     }
 
     private void stopRecord() {
@@ -172,7 +171,7 @@ public class MediaRecordActivity extends AppCompatActivity implements View.OnCli
      * 开始进行播放
      */
     private void startPlay() {
-        MediaPlayer mediaPlayer = new MediaPlayer();
+        MediaPlayer mediaPlayer = new MediaPlayer(); //使用MediaPlayer进行播放
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
