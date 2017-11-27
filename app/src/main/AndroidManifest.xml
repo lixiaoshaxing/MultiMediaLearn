@@ -70,7 +70,8 @@
         <activity android:name=".openglstudy.xbo.XboIndexActivity" />
         <activity android:name=".openglstudy.xbo.vbo.VBOActivity" />
         <activity android:name=".openglstudy.xbo.pbo.PBOActivity" />
-        <activity android:name=".mediastudy.mediarecord.MediaRecordActivity"></activity>
+        <activity android:name=".mediastudy.mediarecord.MediaRecordActivity" />
+        <activity android:name=".mediastudy.audio.AudioRecorderActivity"></activity>
     </application>
 
 </manifest>

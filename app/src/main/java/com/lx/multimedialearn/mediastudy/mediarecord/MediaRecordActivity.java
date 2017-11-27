@@ -28,6 +28,8 @@ import java.util.Date;
  * 1. 开始相机预览
  * 2. 使用MediaRecord进行录制
  * 3. 使用MediaPlayer进行播放
+ * 可以单独录制/播放音频，视频
+ * blog: http://blog.csdn.net/fengyuzhengfan/article/details/38561111
  */
 public class MediaRecordActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -133,7 +135,7 @@ public class MediaRecordActivity extends AppCompatActivity implements View.OnCli
      */
     private void startRecord() {
         String currentTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File file = new File(FileUtils.createCommonDir(), "VID" + currentTime + ".mp4");
+        File file = new File(FileUtils.createCommonDir(), "VID_" + currentTime + ".mp4");
         mPath = file.getAbsolutePath();
         mRecorder = new MediaRecorder(); //初始化
         mCamera.unlock(); //设置自定义Camera之前，必须unLock，Camera可以被录制使用

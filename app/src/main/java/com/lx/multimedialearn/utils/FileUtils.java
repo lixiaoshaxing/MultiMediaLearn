@@ -38,7 +38,7 @@ public class FileUtils {
                 temp.delete();
             }
         }
-        return file.getAbsolutePath();
+        return file.getAbsolutePath() + "/";
     }
 
     /**

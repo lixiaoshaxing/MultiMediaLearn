@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.main.MainAdapter;
 import com.lx.multimedialearn.main.TabModel;
+import com.lx.multimedialearn.mediastudy.audio.AudioRecorderActivity;
 import com.lx.multimedialearn.mediastudy.mediarecord.MediaRecordActivity;
 import com.lx.multimedialearn.mediastudy.videoplayer.VideoPlayerActivity;
 
@@ -38,7 +39,7 @@ public class MediaIndexActivity extends AppCompatActivity {
         List<TabModel> list = new ArrayList<>();
         list.add(new TabModel("1. MediaPlayer使用-videoplayer", "使用MediaPlayer，在SurfaceView，GLSurfaceView，SurfaceTexture上进行视频同步播放", VideoPlayerActivity.class));
         list.add(new TabModel("2. MediaRecord，MediaPlayer使用-mediarecord", "MediaRecord结合Camera录制音视频，使用MediaPlayer进行播放", MediaRecordActivity.class));
-        list.add(new TabModel("3. 硬编码学习-hardcode", "硬编码AudioRecoder,MediaCodec,MediaMuxer使用", VideoPlayerActivity.class));
+        list.add(new TabModel("3. AudioRecord，AudioTrack使用-audio", "使用AudioRecorder录制音频，可以单独处理声音，AudioTrack解析PCM播放声音", AudioRecorderActivity.class));
         list.add(new TabModel("4. 硬编码学习-hardcode", "硬编码AudioRecoder,MediaCodec,MediaMuxer使用", VideoPlayerActivity.class));
         mRecContent.setAdapter(new MainAdapter(list));
     }
