@@ -1,7 +1,10 @@
 package com.lx.multimedialearn.mediastudy.audio;
 
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.AudioTrack;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,8 +15,11 @@ import android.widget.Button;
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.utils.FileUtils;
 import com.lx.multimedialearn.utils.MediaUtils;
+import com.lx.multimedialearn.utils.ToastUtils;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,6 +62,12 @@ public class AudioRecorderActivity extends AppCompatActivity implements View.OnC
                     stopRecord();
                 }
                 break;
+            case R.id.btn_audio_record_audio_track_play:
+                playWithAudioTrack();
+                break;
+            case R.id.btn_audio_record_media_player_play:
+                playWithMediaPlayer();
+                break;
         }
     }
 
@@ -71,7 +83,9 @@ public class AudioRecorderActivity extends AppCompatActivity implements View.OnC
     private final static int AUDIO_CHANNEL = AudioFormat.CHANNEL_IN_STEREO;// 音频通道，双通道
     private final static int AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT; // 音频格式：PCM编码，16位，这里的值是编号，写入wav不要搞混了
     private int mBufferSizeInBytes = 0;// 缓冲区大小：缓冲区字节大小，使用AudioRecord.getMinBufferSize，获取
-    private File mFile;
+    private File mPCMFile;
+    private String mPCMPath; //pcm存储地址
+    private String mWavString;
     private Status mStatus = Status.END;
     FileOutputStream fos;
 
@@ -81,7 +95,10 @@ public class AudioRecorderActivity extends AppCompatActivity implements View.OnC
      * 2. 开始录制
      * 3. 停止录制
      * 4. 转换为wav格式，同时存在pcm，wav两种文件
-     * blog: http://www.jianshu.com/p/90c4071c7768
+     * blog:
+     * http://www.jianshu.com/p/90c4071c7768 AudioRecord基本使用
+     * http://www.jianshu.com/p/af7787b409a2，声音中采样位数，采样频率，回声，降噪的概念，回声消除
+     * http://www.jianshu.com/p/bee958826a9e，AudioTrack源码分析
      */
     private void startRecord() {
         mBufferSizeInBytes = AudioRecord.getMinBufferSize(AUDIO_SAMPLE_RATE, AUDIO_CHANNEL, AUDIO_ENCODING); //获取默认最小缓冲区大小
@@ -91,9 +108,10 @@ public class AudioRecorderActivity extends AppCompatActivity implements View.OnC
             @Override
             public void run() { //需要加入Status，控制状态，处理
                 byte[] audioData = new byte[mBufferSizeInBytes]; //可以暂停录音，中间文件保存在这里，生成多个文件，最后再合成所有录音：http://blog.csdn.net/imhxl/article/details/52190451
-                mFile = new File(FileUtils.createCommonDir(), "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pcm");
+                mPCMPath = FileUtils.createCommonDir() + "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pcm";
+                mPCMFile = new File(mPCMPath);
                 try {
-                    fos = new FileOutputStream(mFile); //创建输出文件流
+                    fos = new FileOutputStream(mPCMFile); //创建输出文件流
                     int readSize = 0;
                     mStatus = Status.RUNNING;
                     while (mStatus == Status.RUNNING) { //正在录音
@@ -119,12 +137,13 @@ public class AudioRecorderActivity extends AppCompatActivity implements View.OnC
         }).start();
     }
 
+    private String mOutputPath;
+
     /**
      * 停止录制音频
      * 1. 可以对录音文件进行转换，pcm->wav
      * 2. 如果有暂停录音，对多份录音文件进行合并
      */
-
     private void stopRecord() {
         mAudioRecord.stop();
         mStatus = Status.END; //设置状态，正在录音的循环会终止
@@ -135,14 +154,80 @@ public class AudioRecorderActivity extends AppCompatActivity implements View.OnC
         new Thread(new Runnable() {  //pcm->wav
             @Override
             public void run() {
+                mOutputPath = FileUtils.createCommonDir() + "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".wav";
                 MediaUtils.pcm2wav(
                         44100,
                         16,
                         2,
                         mBufferSizeInBytes,
-                        mFile.getAbsolutePath(),
-                        FileUtils.createCommonDir() + "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".wav");
+                        mPCMFile.getAbsolutePath(),
+                        mOutputPath);
             }
         }).start();
+    }
+
+    /**
+     * 使用AudioTrack播放pcm音频
+     */
+    private void playWithAudioTrack() {
+        if (mBufferSizeInBytes == 0) {
+            ToastUtils.show(this, "先录制，才能播放");
+            return;
+        }
+        final AudioTrack audioTrack = new AudioTrack(
+                AudioManager.STREAM_MUSIC,
+                44100,
+                AudioFormat.CHANNEL_OUT_STEREO,
+                AudioFormat.ENCODING_PCM_16BIT,
+                mBufferSizeInBytes,
+                AudioTrack.MODE_STREAM);
+        //读取pcm文件
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DataInputStream dis = null;
+                try {
+                    dis = new DataInputStream(new FileInputStream(mPCMPath));
+                    byte[] buffer = new byte[mBufferSizeInBytes]; //设置读取缓冲区
+                    int length;
+                    while ((length = dis.read(buffer, 0, buffer.length)) > 0) {
+                        audioTrack.write(buffer, 0, length);
+                        audioTrack.play();
+                    }
+                    audioTrack.stop();
+                    audioTrack.release();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (dis != null) {
+                        try {
+                            dis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 使用MediaPlayer播放wav音频
+     */
+    private void playWithMediaPlayer() {
+        if (!TextUtils.isEmpty(mOutputPath)) {
+            MediaPlayer mediaPlayer = new MediaPlayer();
+            try {
+                mediaPlayer.setDataSource(mOutputPath);
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mediaPlayer.prepare(); //准备播放
+                mediaPlayer.start();//开始播放
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }
