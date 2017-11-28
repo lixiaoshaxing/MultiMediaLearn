@@ -13,7 +13,7 @@ import com.lx.multimedialearn.R;
  * 4. 视频+音乐配音
  * 5. 生成gif
  */
-public class HardCodeActivity extends AppCompatActivity {
+public class MediaCodecActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -58,7 +58,7 @@
         <activity android:name=".openglstudy.animation.loadetc.LoadETCActivity" />
         <activity android:name=".openglstudy.animation.cameraetc.AnimOnCameraActivity" />
         <activity android:name=".mediastudy.MediaIndexActivity" />
-        <activity android:name=".mediastudy.hardcode.HardCodeActivity" />
+        <activity android:name=".mediastudy.hardcode.MediaCodecActivity" />
         <activity android:name=".openglstudy.stl.STLModelActivity" />
         <activity android:name=".openglstudy.obj.ObjModelActivity" />
         <activity android:name=".openglstudy.obj.ObjMtlActivity" />
