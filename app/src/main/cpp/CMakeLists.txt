@@ -7,5 +7,5 @@ set(lib_src_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(lib_build_DIR $ENV{HOME}/tmp)
 file(MAKE_DIRECTORY ${lib_build_DIR})
 
-add_subdirectory(${lib_src_DIR}/multimedia ${lib_build_DIR}/multimedia)
-#add_subdirectory(${lib_src_DIR}/gperf ${lib_build_DIR}/gperf)
+add_subdirectory(${lib_src_DIR}/multimedia ${lib_build_DIR}/multimedia) #添加子cmakeLists
+add_subdirectory(${lib_src_DIR}/voicechange ${lib_build_DIR}/voicechange)

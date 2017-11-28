@@ -7,4 +7,39 @@
     android:orientation="vertical"
     tools:context="com.lx.multimedialearn.mediastudy.voicechange.VoiceChangeActivity">
 
+    <Button
+        android:id="@+id/btn_voice_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="原声" />
+
+    <Button
+        android:id="@+id/btn_voice_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="提高音调" />
+
+    <Button
+        android:id="@+id/btn_voice_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="拉长降低音调" />
+
+    <Button
+        android:id="@+id/btn_voice_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="低沉" />
+
+    <Button
+        android:id="@+id/btn_voice_5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="加快音速" />
+
+    <Button
+        android:id="@+id/btn_voice_6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="拉长" />
 </LinearLayout>

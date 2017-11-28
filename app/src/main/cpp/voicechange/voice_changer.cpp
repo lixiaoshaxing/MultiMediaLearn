@@ -10,8 +10,10 @@ using namespace FMOD;
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_lixiao_voicechanger_VoiceFix_voiceFix(JNIEnv *env, jobject instance, jstring filePath_,
-                                               jint index) {
+Java_com_lx_multimedialearn_mediastudy_voicechange_VoiceChangeActivity_voiceFix(JNIEnv *env,
+                                                                                jobject instance,
+                                                                                jstring filePath_,
+                                                                                jint index) {
     const char *filePath = env->GetStringUTFChars(filePath_, 0);
     System *system;
     Sound *sound;
