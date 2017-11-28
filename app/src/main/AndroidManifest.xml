@@ -72,7 +72,8 @@
         <activity android:name=".openglstudy.xbo.pbo.PBOActivity" />
         <activity android:name=".mediastudy.mediarecord.MediaRecordActivity" />
         <activity android:name=".mediastudy.audio.AudioRecorderActivity" />
-        <activity android:name=".mediastudy.voicechange.VoiceChangeActivity"></activity>
+        <activity android:name=".mediastudy.voicechange.VoiceChangeActivity" />
+        <activity android:name=".mediastudy.hardcode.EasyPlayerActivity"></activity>
     </application>
 
 </manifest>
