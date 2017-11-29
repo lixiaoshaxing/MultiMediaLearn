@@ -222,4 +222,22 @@ public class MediaUtils {
         result[1] = RGBA_YUV420SP;
         return result;
     }
+
+    /**
+     * 根据支持的色彩模型对相机获取的nv21数据进行调整
+     *
+     * @param nv21bytes
+     * @param i420bytes
+     * @param width
+     * @param height
+     */
+    public static void NV21toI420SemiPlanar(byte[] nv21bytes, byte[] i420bytes, int width, int height) {
+        final int iSize = width * height;
+        System.arraycopy(nv21bytes, 0, i420bytes, 0, iSize);
+
+        for (int iIndex = 0; iIndex < iSize / 2; iIndex += 2) {
+            i420bytes[iSize + iIndex / 2 + iSize / 4] = nv21bytes[iSize + iIndex]; // U
+            i420bytes[iSize + iIndex / 2] = nv21bytes[iSize + iIndex + 1]; // V
+        }
+    }
 }

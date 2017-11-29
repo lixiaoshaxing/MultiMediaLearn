@@ -45,6 +45,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * 生成gif：http://www.javashuo.com/content/p-6359257.html
  * MediaCodec使用：http://blog.csdn.net/junzia/article/details/54018671
  * 4.1之前 使用ffmpeg，4.1 提供硬编码 MediaCodec，4.3 提供MediaMutex合成
+ * 音视频这样不分离，很容易写出shit一样的代码啊！！！
  */
 public class MediaCodecActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -85,6 +86,8 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
         Camera.Size supportPreviewSize = CameraUtils.getSupportPreviewSize(mCamera, ScreenUtils.getScreenWidth(this) / 2 - 50);
         Camera.Size supportPictureSize = CameraUtils.getSupportPicSize(mCamera, ScreenUtils.getScreenWidth(this) / 2 - 50);
         mParameters.setPreviewSize(supportPreviewSize.width, supportPreviewSize.height);
+        this.mWidth = supportPreviewSize.width;
+        this.mHeight = supportPreviewSize.height;
         mParameters.setPictureSize(supportPictureSize.width, supportPictureSize.height);
         mParameters.setPreviewFormat(ImageFormat.NV21);
         mParameters.setPictureFormat(ImageFormat.JPEG);
@@ -100,7 +103,9 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
                 mCamera.addCallbackBuffer(buffers);//这里能够接收到在预览界面上的数据，NV21格式即yuv420sp
                 //这个数据需要加到队列，供编码使用，这个数据预览方向是对的，但是data里存的方向是错的，nv21格式
                 if (mVideoStatus == Status.RUNNING) {
-                    mQueue.add(data);
+                    byte[] temp = new byte[data.length];
+                    MediaUtils.NV21toI420SemiPlanar(data, temp, mWidth, mHeight);
+                    mQueue.add(temp);
                 }
             }
         });
@@ -117,8 +122,6 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                mWidth = width;
-                mHeight = height;
             }
 
             @Override
@@ -145,20 +148,26 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
             case R.id.btn_media_codec_video:
                 if (TextUtils.equals("视频", btn.getText())) {
                     btn.setText("停止");
-                    startVideoRecord(mSurfaceView.getWidth(), mSurfaceView.getHeight());
+                    startVideoRecord();
                 } else {
                     btn.setText("视频");
                     stopVideoRecord();
                 }
                 break;
             case R.id.btn_media_codec_mux:
+                if (TextUtils.equals("音视频", btn.getText())) {
+                    btn.setText("停止");
+                    startRecord();
+                } else {
+                    btn.setText("音视频");
+                    stopRecord();
+                }
                 break;
             case R.id.btn_media_codec_play:
                 playWithMediaPlayer();
                 break;
         }
     }
-
 
     /***********************音频录制相关方法***************************/
     enum Status { //状态
@@ -289,9 +298,9 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
     /**
      * 录制视频
      */
-    private void startVideoRecord(int width, int height) {
+    private void startVideoRecord() {
         try {
-            mVideoPath = FileUtils.createFilePath("mp4", 0);
+            mVideoPath = FileUtils.createFilePath("mp4", 0); //经过MediaCodec是编码为h264数据，还需要压缩为mp4格式数据
             mVideoFos = new FileOutputStream(mVideoPath);
             MediaFormat format = MediaFormat.createVideoFormat(mVideoMime, mWidth, mHeight);
             format.setInteger(MediaFormat.KEY_BIT_RATE, mVideoRate);
@@ -307,6 +316,7 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
             new Thread(new Runnable() { //
                 @Override
                 public void run() {
+                    byte[] headInfo = null;
                     while (mVideoStatus == Status.RUNNING) {
                         long time = System.currentTimeMillis();
                         //需要从Camera中拿数据，并且处理
@@ -321,7 +331,6 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
                                 mVideoCodec.queueInputBuffer(index, 0, data.length, (System.nanoTime() - startTime) / 1000, mVideoStatus == Status.RUNNING ? 0 : MediaCodec.BUFFER_FLAG_END_OF_STREAM);
                                 MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
                                 int outIndex = mVideoCodec.dequeueOutputBuffer(info, 0);
-                                byte[] headInfo = null;
                                 while (outIndex >= 0) {
                                     ByteBuffer outBuf = mVideoCodec.getOutputBuffer(outIndex);
                                     byte[] temp = new byte[info.size];
@@ -335,9 +344,8 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
                                         System.arraycopy(temp, 0, keyframe, headInfo.length, temp.length);
                                         mVideoFos.write(keyframe, 0, keyframe.length);
                                     } else if (info.flags == MediaCodec.BUFFER_FLAG_END_OF_STREAM) {
-
                                     } else {
-                                        fos.write(temp, 0, temp.length);
+                                        mVideoFos.write(temp, 0, temp.length); //这是是h264格式，还需要封装为mp4才能播放
                                     }
                                     mVideoFos.flush();
                                     mVideoCodec.releaseOutputBuffer(outIndex, false);
@@ -425,5 +433,19 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
             return;
         }
         ToastUtils.show(this, "必须先录制，才能播放");
+    }
+
+    /*****************音视频的录制************************/
+    /**
+     * 音视频录制合成，把之前存入文件的buffer写入MediaMux轨道中
+     */
+    private void startRecord() {
+
+    }
+
+    /**
+     * 停止录制
+     */
+    private void stopRecord() {
     }
 }
