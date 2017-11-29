@@ -108,7 +108,7 @@ public class AudioRecorderActivity extends AppCompatActivity implements View.OnC
             @Override
             public void run() { //需要加入Status，控制状态，处理
                 byte[] audioData = new byte[mBufferSizeInBytes]; //可以暂停录音，中间文件保存在这里，生成多个文件，最后再合成所有录音：http://blog.csdn.net/imhxl/article/details/52190451
-                mPCMPath = FileUtils.createCommonDir() + "AUD_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pcm";
+                mPCMPath = FileUtils.createFilePath("pcm", 1);
                 mPCMFile = new File(mPCMPath);
                 try {
                     fos = new FileOutputStream(mPCMFile); //创建输出文件流

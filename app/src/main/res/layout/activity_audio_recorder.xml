@@ -9,20 +9,20 @@
 
     <Button
         android:id="@+id/btn_audio_record_record"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="录制" />
 
     <Button
         android:id="@+id/btn_audio_record_audio_track_play"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="AudioTrack播放"
         android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_audio_record_media_player_play"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="MediaPlayer播放"
         android:textAllCaps="false" />

@@ -152,4 +152,44 @@ public class BitmapUtils {
         bmp.copyPixelsFromBuffer(byteBuffer);
         return bmp;
     }
+
+    /**
+     * java层rgba->yuv，MediaCodec编码时需要yuv数据，从SurfaceView，Camera回调中都是rgba数据
+     *
+     * @param rgba
+     * @param width
+     * @param height
+     * @param yuv
+     */
+    public static void rgbaToYuv(byte[] rgba, int width, int height, byte[] yuv) {
+        final int frameSize = width * height;
+
+        int yIndex = 0;
+        int uIndex = frameSize;
+        int vIndex = frameSize + frameSize / 4;
+
+        int R, G, B, Y, U, V;
+        int index = 0;
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                index = j * width + i;
+                if (rgba[index * 4] > 127 || rgba[index * 4] < -128) {
+                    Log.e("color", "-->" + rgba[index * 4]);
+                }
+                R = rgba[index * 4] & 0xFF;
+                G = rgba[index * 4 + 1] & 0xFF;
+                B = rgba[index * 4 + 2] & 0xFF;
+
+                Y = ((66 * R + 129 * G + 25 * B + 128) >> 8) + 16;
+                U = ((-38 * R - 74 * G + 112 * B + 128) >> 8) + 128;
+                V = ((112 * R - 94 * G - 18 * B + 128) >> 8) + 128;
+
+                yuv[yIndex++] = (byte) ((Y < 0) ? 0 : ((Y > 255) ? 255 : Y));
+                if (j % 2 == 0 && index % 2 == 0) {
+                    yuv[uIndex++] = (byte) ((U < 0) ? 0 : ((U > 255) ? 255 : U));
+                    yuv[vIndex++] = (byte) ((V < 0) ? 0 : ((V > 255) ? 255 : V));
+                }
+            }
+        }
+    }
 }

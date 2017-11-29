@@ -1,5 +1,10 @@
 package com.lx.multimedialearn.utils;
 
+import android.media.MediaCodecInfo;
+import android.media.MediaCodecList;
+import android.os.Build;
+import android.util.Log;
+
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,6 +13,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 /**
  * 多媒体工具类
@@ -17,6 +23,19 @@ import java.nio.ByteOrder;
  * @since 2017-11-27 15:44
  */
 public class MediaUtils {
+
+    public static void addADTSToPacket(byte[] buffer, int length) {
+        int profile = 2;  //AAC LC
+        int freqIdx = 4;  //44.1KHz
+        int chanCfg = 2;  //CPE
+        buffer[0] = (byte) 0xFF;
+        buffer[1] = (byte) 0xF9;
+        buffer[2] = (byte) (((profile - 1) << 6) + (freqIdx << 2) + (chanCfg >> 2));
+        buffer[3] = (byte) (((chanCfg & 3) << 6) + (length >> 11));
+        buffer[4] = (byte) ((length & 0x7FF) >> 3);
+        buffer[5] = (byte) (((length & 7) << 5) + 0x1F);
+        buffer[6] = (byte) 0xFC;
+    }
 
     /**
      * pcm转wav
@@ -149,5 +168,58 @@ public class MediaUtils {
             mByteRate = mSampleRate * mNumChannel * mBitsPerSample / 8;
             mBlockAlign = (short) (mNumChannel * mBitsPerSample / 8);
         }
+    }
+
+    public static final int RGBA_YUV420SP = 0x00004012;
+    public static final int BGRA_YUV420SP = 0x00004210;
+    public static final int RGBA_YUV420P = 0x00014012;
+    public static final int BGRA_YUV420P = 0x00014210;
+    public static final int RGB_YUV420SP = 0x00003012;
+    public static final int RGB_YUV420P = 0x00013012;
+    public static final int BGR_YUV420SP = 0x00003210;
+    public static final int BGR_YUV420P = 0x00013210;
+
+    /**
+     * 检查MediaCodec支持的颜色类型
+     *
+     * @param mime 文件类型
+     * @return 0：颜色类型 1：rgb->yuv使用的类型，libyuv使用
+     */
+    public static int[] checkColorFormat(String mime) {
+        int[] result = new int[2];
+        if (Build.MODEL.equals("HUAWEI P6-C00")) {
+            result[0] = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar;
+            result[1] = BGRA_YUV420SP;
+            return result;
+        }
+        for (int i = 0; i < MediaCodecList.getCodecCount(); i++) {
+            MediaCodecInfo info = MediaCodecList.getCodecInfoAt(i);
+            if (info.isEncoder()) {
+                String[] types = info.getSupportedTypes();
+                for (String type : types) {
+                    if (type.equals(mime)) {
+                        Log.e("YUV", "type-->" + type);
+                        MediaCodecInfo.CodecCapabilities c = info.getCapabilitiesForType(type);
+                        Log.e("YUV", "color-->" + Arrays.toString(c.colorFormats));
+                        for (int j = 0; j < c.colorFormats.length; j++) {
+                            if (c.colorFormats[j] == MediaCodecInfo.CodecCapabilities
+                                    .COLOR_FormatYUV420Planar) {
+                                result[0] = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar;
+                                result[1] = RGBA_YUV420P;
+                                return result;
+                            } else if (c.colorFormats[j] == MediaCodecInfo.CodecCapabilities
+                                    .COLOR_FormatYUV420SemiPlanar) {
+                                result[0] = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar;
+                                result[1] = RGBA_YUV420SP;
+                                return result;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        result[0] = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar;
+        result[1] = RGBA_YUV420SP;
+        return result;
     }
 }

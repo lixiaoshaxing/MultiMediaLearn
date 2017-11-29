@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 文件的读取，输出
@@ -23,6 +25,23 @@ import java.io.InputStreamReader;
  * @since 2017-09-20 10:45
  */
 public class FileUtils {
+
+    /**
+     * 根据后缀创建音视频地址
+     *
+     * @param suffix aac,mp4,pcm等
+     * @param type   0: 视频 1：音频
+     * @return
+     */
+    public static String createFilePath(String suffix, int type) {
+        String path;
+        if (type == 0) {
+            path = createCommonDir() + "VID_" + new SimpleDateFormat("HH_mm_ss").format(new Date()) + "." + suffix;
+        } else {
+            path = createCommonDir() + "AUD_" + new SimpleDateFormat("HH_mm_ss").format(new Date()) + "." + suffix;
+        }
+        return path;
+    }
 
     /**
      * 创建通用文件夹，并返回通用文件夹地址

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.lx.multimedialearn.mediastudy.hardcode.MediaCodecActivity">
+
+    <SurfaceView
+        android:id="@+id/surface_media_codec_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_media_codec_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="音频" />
+
+        <Button
+            android:id="@+id/btn_media_codec_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="视频" />
+
+        <Button
+            android:id="@+id/btn_media_codec_mux"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="音视频" />
+
+        <Button
+            android:id="@+id/btn_media_codec_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="播放" />
+    </LinearLayout>
+
+</FrameLayout>
