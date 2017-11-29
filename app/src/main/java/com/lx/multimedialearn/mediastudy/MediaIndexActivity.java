@@ -11,6 +11,7 @@ import com.lx.multimedialearn.main.TabModel;
 import com.lx.multimedialearn.mediastudy.audio.AudioRecorderActivity;
 import com.lx.multimedialearn.mediastudy.hardcode.EasyPlayerActivity;
 import com.lx.multimedialearn.mediastudy.hardcode.MediaCodecActivity;
+import com.lx.multimedialearn.mediastudy.hardcode.MediaMuxActivity;
 import com.lx.multimedialearn.mediastudy.mediarecord.MediaRecordActivity;
 import com.lx.multimedialearn.mediastudy.videoplayer.VideoPlayerActivity;
 import com.lx.multimedialearn.mediastudy.voicechange.VoiceChangeActivity;
@@ -45,8 +46,9 @@ public class MediaIndexActivity extends AppCompatActivity {
         list.add(new TabModel("3. AudioRecord，AudioTrack使用-audio", "使用AudioRecorder录制音频，可以单独处理声音，AudioTrack解析PCM播放声音", AudioRecorderActivity.class));
         list.add(new TabModel("4. FMOD变声-voicechange", "Fmod编译-voicechange", VoiceChangeActivity.class));
         list.add(new TabModel("5. MediaExtractor，MediaCodec播放视频-hardcode", "播放本地视频", EasyPlayerActivity.class));
-        list.add(new TabModel("6. Camera，MediaCodec，MediaMux录制音视频-hardcode", "录制音视频", MediaCodecActivity.class));
-        list.add(new TabModel("7. Camera，MediaCodec，MediaMux，Opengl录制滤镜视频-filterrecord", "录制带滤镜视频", EasyPlayerActivity.class));
+        list.add(new TabModel("6. Camera，MediaCodec，MediaMux录制音视频-hardcode", "分别录制音频，视频到文件", MediaCodecActivity.class));
+        list.add(new TabModel("7. Camera，MediaCodec，MediaMux录制音视频-hardcode", "录制音视频封装为mp4", MediaMuxActivity.class));
+        list.add(new TabModel("8. Camera，MediaCodec，MediaMux，Opengl录制滤镜视频-filterrecord", "录制带滤镜视频", EasyPlayerActivity.class));
         mRecContent.setAdapter(new MainAdapter(list));
     }
 }

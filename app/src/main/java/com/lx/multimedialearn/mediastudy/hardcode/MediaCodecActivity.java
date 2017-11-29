@@ -10,7 +10,9 @@ import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.SurfaceHolder;
@@ -36,7 +38,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * 1. 音频录制AudioRecoder/OpenSL
  * 2. 视频录制Camera
  * 3. 编码（也可以解码）MediaCodec
- * 4. 声音+视频合成，生成视频 MediaMutex
+ * 4. 声音+视频合成，生成视频 MediaMutex，在MediaMuxActivity中
  * 5. 音频，视频提取（两个通道的分离）MediaExtractor
  * 6. 编解码器 MediaCrypto(待)
  * 7. 音视频加密 MediaDrm（待）
@@ -47,15 +49,15 @@ import java.util.concurrent.LinkedBlockingQueue;
  * 4.1之前 使用ffmpeg，4.1 提供硬编码 MediaCodec，4.3 提供MediaMutex合成
  * 音视频这样不分离，很容易写出shit一样的代码啊！！！
  */
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class MediaCodecActivity extends AppCompatActivity implements View.OnClickListener {
 
     private SurfaceView mSurfaceView;
     private Button mBtnAudio; //音频
     private Button mBtnVideo; //视频
-    private Button mBtnMux; //混合音视频
     private Button mBtnPlay; //播放
     private Camera mCamera;
-    private android.hardware.Camera.Parameters mParameters;
+    private Camera.Parameters mParameters;
     private LinkedBlockingQueue<byte[]> mQueue; //camera数据存放在队列里，编码器从队列拿数据进行编码
     private int mWidth;
     private int mHeight;
@@ -67,11 +69,9 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
         mSurfaceView = (SurfaceView) findViewById(R.id.surface_media_codec_player);
         mBtnAudio = (Button) findViewById(R.id.btn_media_codec_audio);
         mBtnVideo = (Button) findViewById(R.id.btn_media_codec_video);
-        mBtnMux = (Button) findViewById(R.id.btn_media_codec_mux);
         mBtnPlay = (Button) findViewById(R.id.btn_media_codec_play);
         mBtnAudio.setOnClickListener(this);
         mBtnVideo.setOnClickListener(this);
-        mBtnMux.setOnClickListener(this);
         mBtnPlay.setOnClickListener(this);
         init();
     }
@@ -152,15 +152,6 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
                 } else {
                     btn.setText("视频");
                     stopVideoRecord();
-                }
-                break;
-            case R.id.btn_media_codec_mux:
-                if (TextUtils.equals("音视频", btn.getText())) {
-                    btn.setText("停止");
-                    startRecord();
-                } else {
-                    btn.setText("音视频");
-                    stopRecord();
                 }
                 break;
             case R.id.btn_media_codec_play:
@@ -392,9 +383,6 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
         mCamera.release();
     }
 
-    /*************录制音视频，合成的方法********************/
-    private String mMuxPath;
-
     /**
      * 播放
      * 1. 如果有mux，video，audio地址：播放音视频
@@ -403,10 +391,6 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
      * 4. 如果都为null，弹toast
      */
     private void playWithMediaPlayer() {
-        if (!TextUtils.isEmpty(mMuxPath)) {
-            //播放音视频
-            return;
-        }
         if (!TextUtils.isEmpty(mVideoPath)) {
             //播放视频
             MediaPlayer player = new MediaPlayer();
@@ -433,19 +417,5 @@ public class MediaCodecActivity extends AppCompatActivity implements View.OnClic
             return;
         }
         ToastUtils.show(this, "必须先录制，才能播放");
-    }
-
-    /*****************音视频的录制************************/
-    /**
-     * 音视频录制合成，把之前存入文件的buffer写入MediaMux轨道中
-     */
-    private void startRecord() {
-
-    }
-
-    /**
-     * 停止录制
-     */
-    private void stopRecord() {
     }
 }

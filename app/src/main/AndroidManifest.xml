@@ -73,7 +73,8 @@
         <activity android:name=".mediastudy.mediarecord.MediaRecordActivity" />
         <activity android:name=".mediastudy.audio.AudioRecorderActivity" />
         <activity android:name=".mediastudy.voicechange.VoiceChangeActivity" />
-        <activity android:name=".mediastudy.hardcode.EasyPlayerActivity"></activity>
+        <activity android:name=".mediastudy.hardcode.EasyPlayerActivity" />
+        <activity android:name=".mediastudy.hardcode.MediaMuxActivity"></activity>
     </application>
 
 </manifest>

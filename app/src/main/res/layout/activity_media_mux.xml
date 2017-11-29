@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lx.multimedialearn.mediastudy.hardcode.MediaCodecActivity">
+    tools:context="com.lx.multimedialearn.mediastudy.hardcode.MediaMuxActivity">
 
     <SurfaceView
-        android:id="@+id/surface_media_codec_player"
+        android:id="@+id/surface_media_mux_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -18,21 +18,17 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_media_codec_audio"
-            android:layout_width="wrap_content"
+            android:id="@+id/btn_media_mux_mux"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="音频" />
+            android:layout_weight="1"
+            android:text="录制" />
 
         <Button
-            android:id="@+id/btn_media_codec_video"
-            android:layout_width="wrap_content"
+            android:id="@+id/btn_media_mux_play"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="视频" />
-
-        <Button
-            android:id="@+id/btn_media_codec_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="播放" />
     </LinearLayout>
 
