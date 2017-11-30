@@ -28,7 +28,7 @@ android {
     }
     sourceSets {
         main { //把lib下的so库扩展到jniLibs，这样就能loadLibrary
-            jniLibs.srcDirs = ['src/main/cpp/voicechange/lib', 'src/main/cpp/multimedia/lib']
+            jniLibs.srcDirs = ['src/main/cpp/voicechange/lib', 'src/main/cpp/libyuv/lib']
         }
     }
     externalNativeBuild {

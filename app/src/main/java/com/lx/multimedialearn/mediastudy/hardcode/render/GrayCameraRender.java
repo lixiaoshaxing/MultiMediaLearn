@@ -9,6 +9,7 @@ import android.opengl.GLSurfaceView;
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.utils.FileUtils;
 import com.lx.multimedialearn.utils.GlUtil;
+import com.lx.multimedialearn.utils.YuvUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -361,13 +362,18 @@ public class GrayCameraRender implements GLSurfaceView.Renderer {
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
             // 这里读取纹理，建议使用PBO，效率更高，不用pbo，会掉帧严重
-            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(mWidth * mHeight * 4);
-            byteBuffer.position(0);
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(mWidth * mHeight * 4); // 4，每个像素4个byte
+            byteBuffer.position(0);//readPixel是很耗时，并被阻塞的过程
             GLES20.glReadPixels(0, 0, mWidth, mHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, byteBuffer);
             if (mListener != null) {
                 //获取的数据对倒的。转90度，这里还是rgb数据，需要转yuv，mediaCodec才能解析，使用libYuv，速度快（待）
                 //转方向可以给MediaCodec传反转矩阵，播放器播放mp4时，会读入这个矩阵，转向播放
-                mListener.output(byteBuffer.array());
+                //使用libyuv做镜像转换
+                byte[] data = byteBuffer.array();
+                byte[] dst = new byte[data.length];
+                YuvUtils.rgba_mirror(data, dst, mWidth, mHeight); //转换为rgba！！！不是argb
+                mListener.output(dst);
+                // mListener.output(data);
             }
             GLES20.glDeleteTextures(1, textureColorBuffer, 0); //先删除
             GLES20.glDeleteRenderbuffers(1, rbo, 0);

@@ -23,12 +23,12 @@ import android.widget.Button;
 
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.mediastudy.hardcode.render.GrayCameraRender;
-import com.lx.multimedialearn.utils.BitmapUtils;
 import com.lx.multimedialearn.utils.CameraUtils;
 import com.lx.multimedialearn.utils.FileUtils;
 import com.lx.multimedialearn.utils.MediaUtils;
 import com.lx.multimedialearn.utils.ScreenUtils;
 import com.lx.multimedialearn.utils.ToastUtils;
+import com.lx.multimedialearn.utils.YuvUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -302,9 +302,10 @@ public class OpenGLRecordActivity extends AppCompatActivity implements View.OnCl
                     int index = mVideoCodec.dequeueInputBuffer(-1);
                     if (index >= 0) {
                         //mVideoCodec.getInputBuffers()[index];//支持4.1之上
-                        if (newData != null) {
+                        if (newData != null) { //使用Libyuv转换
                             byte[] yuv = new byte[mWidth * mHeight * 3 / 2];
-                            BitmapUtils.rgbaToYuv(newData, mWidth, mHeight, yuv); //rgb边yuv数据
+//                            BitmapUtils.rgbaToYuv(newData, mWidth, mHeight, yuv); //java层rgb边yuv数据
+                            YuvUtils.rgba_nv21(newData, yuv, mWidth, mHeight); //libyuv转
                             ByteBuffer byteBuffer = mVideoCodec.getInputBuffer(index); //支持5.0之上
                             byteBuffer.clear();
                             byteBuffer.put(yuv);
