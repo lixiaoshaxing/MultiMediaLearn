@@ -366,10 +366,9 @@ public class GrayCameraRender implements GLSurfaceView.Renderer {
             GLES20.glReadPixels(0, 0, mWidth, mHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, byteBuffer);
             if (mListener != null) {
                 //获取的数据对倒的。转90度，这里还是rgb数据，需要转yuv，mediaCodec才能解析，使用libYuv，速度快（待）
-               //转方向可以给MediaCodec传反转矩阵，播放器播放mp4时，会读入这个矩阵，转向播放
+                //转方向可以给MediaCodec传反转矩阵，播放器播放mp4时，会读入这个矩阵，转向播放
                 mListener.output(byteBuffer.array());
             }
-
             GLES20.glDeleteTextures(1, textureColorBuffer, 0); //先删除
             GLES20.glDeleteRenderbuffers(1, rbo, 0);
             GLES20.glDeleteFramebuffers(1, fbo, 0);

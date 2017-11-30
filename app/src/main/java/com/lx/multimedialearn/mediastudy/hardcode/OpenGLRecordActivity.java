@@ -42,6 +42,8 @@ import static com.lx.multimedialearn.utils.GlUtil.createCameraTextureID;
  * (1)rgba->yuv
  * (2)方向的调整
  * 3. 会掉帧，如果需要流畅的，结合pbo录制，pbo见openglstudy/xbo/pbo，后续会补充上
+ * 4. 前置摄像头，采集的数据是镜像的，这就需要转方向了，jni+neon比较快，下文有方法的，libyuv最好
+ * 好文章：音视频处理中的坑：http://ragnraok.github.io/android_video_record.html
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class OpenGLRecordActivity extends AppCompatActivity implements View.OnClickListener {
@@ -223,6 +225,7 @@ public class OpenGLRecordActivity extends AppCompatActivity implements View.OnCl
             mMuxPath = FileUtils.createFilePath("mp4", 0);
             //初始化MediaMux
             mMediaMux = new MediaMuxer(mMuxPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            mMediaMux.setOrientationHint(180); //readPixel数据是倒置的，传入这个角度，后期播放mp4，会使用矩阵进行旋转，方向就正确了，但是前置摄像头又镜像了。。。。使用neon进行镜像旋转吧。。。
             mStatus = Status.RUNNING;
             startAudioRecord();
             startVideoRecord();
