@@ -110,10 +110,10 @@ public class MediaMuxActivity extends AppCompatActivity implements View.OnClickL
                 mCamera.addCallbackBuffer(buffers);//这里能够接收到在预览界面上的数据，NV21格式即yuv420sp
                 //这个数据需要加到队列，供编码使用，这个数据预览方向是对的，但是data里存的方向是错的，nv21格式
                 if (mStatus == Status.RUNNING) {
-//                    byte[] temp = new byte[data.length];
-//                    MediaUtils.NV21toI420SemiPlanar(data, temp, mWidth, mHeight);
-//                    mQueue.add(temp);
-                    mQueue.add(data); //nv21需要变换，才能显示正确的颜色
+                    byte[] temp = new byte[data.length];
+                    MediaUtils.NV21toI420SemiPlanar(data, temp, mWidth, mHeight);
+                    mQueue.add(temp);
+                    //mQueue.add(data); //nv21需要变换，才能显示正确的颜色
                 }
             }
         });
@@ -270,7 +270,7 @@ public class MediaMuxActivity extends AppCompatActivity implements View.OnClickL
                 while (mStatus == Status.RUNNING) {
                     long time = System.currentTimeMillis();
                     //需要从Camera中拿数据，并且处理
-                    byte[] data = new byte[0]; //拿出一帧画面，nv21格式，如果从GL，使用readPixel，是rgba格式
+                    byte[] data = null; //拿出一帧画面，nv21格式，如果从GL，使用readPixel，是rgba格式
                     try {
                         data = mQueue.take();
                     } catch (InterruptedException e) {
@@ -344,6 +344,7 @@ public class MediaMuxActivity extends AppCompatActivity implements View.OnClickL
             mPlayer = new MediaPlayer();
             try {
                 mPlayer.setDataSource(mMuxPath);
+                mPlayer.setDisplay(mSurfaceView.getHolder());
                 mPlayer.prepare();
                 mPlayer.start();
             } catch (IOException e) {

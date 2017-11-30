@@ -6,6 +6,32 @@
     android:layout_height="match_parent"
     tools:context="com.lx.multimedialearn.mediastudy.hardcode.OpenGLRecordActivity">
 
+    <android.opengl.GLSurfaceView
+        android:id="@+id/glsurface_open_gl_record_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_gl_record_record"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="录制" />
+
+        <Button
+            android:id="@+id/btn_gl_record_play"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="播放" />
+
+    </LinearLayout>
 
 
 </FrameLayout>
