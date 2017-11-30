@@ -110,9 +110,10 @@ public class MediaMuxActivity extends AppCompatActivity implements View.OnClickL
                 mCamera.addCallbackBuffer(buffers);//这里能够接收到在预览界面上的数据，NV21格式即yuv420sp
                 //这个数据需要加到队列，供编码使用，这个数据预览方向是对的，但是data里存的方向是错的，nv21格式
                 if (mStatus == Status.RUNNING) {
-                    byte[] temp = new byte[data.length];
-                    MediaUtils.NV21toI420SemiPlanar(data, temp, mWidth, mHeight);
-                    mQueue.add(temp);
+//                    byte[] temp = new byte[data.length];
+//                    MediaUtils.NV21toI420SemiPlanar(data, temp, mWidth, mHeight);
+//                    mQueue.add(temp);
+                    mQueue.add(data); //nv21需要变换，才能显示正确的颜色
                 }
             }
         });
@@ -196,6 +197,7 @@ public class MediaMuxActivity extends AppCompatActivity implements View.OnClickL
             mMuxPath = FileUtils.createFilePath("mp4", 0);
             //初始化MediaMux
             mMediaMux = new MediaMuxer(mMuxPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            mStatus = Status.RUNNING;
             startAudioRecord();
             startVideoRecord();
         } catch (IOException e1) {
@@ -233,6 +235,7 @@ public class MediaMuxActivity extends AppCompatActivity implements View.OnClickL
                         if (outIndex >= 0) {
                             ByteBuffer buffer = mAudioCodec.getOutputBuffer(outIndex); //读出编码好的数据
                             //放入mux
+                            buffer.position(info.offset);
                             if (mAudioTrack >= 0 && mVideoTrack >= 0 && info.size > 0 && info.presentationTimeUs > 0) {
                                 try {
                                     mMediaMux.writeSampleData(mAudioTrack, buffer, info);
@@ -260,57 +263,54 @@ public class MediaMuxActivity extends AppCompatActivity implements View.OnClickL
      * 录制视频
      */
     private void startVideoRecord() {
-        final long startTime = System.nanoTime();
-        new Thread(new Runnable() { //
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                byte[] headInfo = null;
+                long startTime = System.nanoTime();
                 while (mStatus == Status.RUNNING) {
                     long time = System.currentTimeMillis();
                     //需要从Camera中拿数据，并且处理
+                    byte[] data = new byte[0]; //拿出一帧画面，nv21格式，如果从GL，使用readPixel，是rgba格式
                     try {
-                        byte[] data = mQueue.take(); //拿出一帧画面，nv21格式，如果从GL，使用readPixel，是rgba格式
-                        int index = mVideoCodec.dequeueInputBuffer(-1);
-                        if (index >= 0) {
-                            //mVideoCodec.getInputBuffers()[index];//支持4.1之上
-                            ByteBuffer byteBuffer = mVideoCodec.getInputBuffer(index); //支持5.0之上
-                            byteBuffer.clear();
-                            byteBuffer.put(data);
-                            mVideoCodec.queueInputBuffer(index, 0, data.length, (System.nanoTime() - startTime) / 1000, mStatus == Status.RUNNING ? 0 : MediaCodec.BUFFER_FLAG_END_OF_STREAM);
-                            MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-                            int outIndex = mVideoCodec.dequeueOutputBuffer(info, 0);
-                            while (outIndex >= 0) {
-                                ByteBuffer outBuf = mVideoCodec.getOutputBuffer(outIndex);
-                                if (info.flags == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                                    mVideoTrack = mMediaMux.addTrack(mVideoCodec.getOutputFormat());
-                                    if (mAudioTrack >= 0 && mVideoTrack >= 0) {
-                                        mMediaMux.start();
-                                    }
-                                } else {
-                                    if (mAudioTrack >= 0 && mVideoTrack >= 0 && info.size > 0 && info.presentationTimeUs > 0) {
-                                        try {
-                                            mMediaMux.writeSampleData(mVideoTrack, outBuf, info);
-                                        } catch (Exception e) {
-                                            Log.e("sys.out", "video error:size=" + info.size + "/offset="
-                                                    + info.offset + "/timeUs=" + info.presentationTimeUs);
-                                            //e.printStackTrace();
-                                            Log.e("sys.out", "-->" + e.getMessage());
-                                        }
-                                    }
-                                }
-                                mVideoCodec.releaseOutputBuffer(outIndex, false);
-                                outIndex = mVideoCodec.dequeueOutputBuffer(info, 0); //接着读取
-                            }
-                        }
+                        data = mQueue.take();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    long cost = System.currentTimeMillis() - time; //读取这一帧并保存到file中耗费的时间
-                    if (mFpsTime > cost) { //还不到一帧持续的时间
-                        try {
-                            Thread.sleep(mFpsTime - cost);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                    int index = mVideoCodec.dequeueInputBuffer(-1);
+                    if (index >= 0) {
+                        //mVideoCodec.getInputBuffers()[index];//支持4.1之上
+                        ByteBuffer byteBuffer = mVideoCodec.getInputBuffer(index); //支持5.0之上
+                        byteBuffer.clear();
+                        byteBuffer.put(data);
+                        mVideoCodec.queueInputBuffer(index, 0, data.length, (System.nanoTime() - startTime) / 1000, mStatus == Status.RUNNING ? 0 : MediaCodec.BUFFER_FLAG_END_OF_STREAM);
+                        data = null;
+                        MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+                        int outIndex = mVideoCodec.dequeueOutputBuffer(info, 0);
+                        do {
+                            if (outIndex >= 0) {
+                                if (mStatus != Status.RUNNING) {
+                                    return;
+                                }
+                                ByteBuffer outBuf = mVideoCodec.getOutputBuffer(outIndex);
+                                if (mAudioTrack >= 0 && mVideoTrack >= 0 && info.size > 0 && info.presentationTimeUs > 0) {
+                                    mMediaMux.writeSampleData(mVideoTrack, outBuf, info);
+                                }
+                                mVideoCodec.releaseOutputBuffer(outIndex, false);
+                                outIndex = mVideoCodec.dequeueOutputBuffer(info, 0); //接着读取
+                            } else if (outIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                                mVideoTrack = mMediaMux.addTrack(mVideoCodec.getOutputFormat());
+                                if (mAudioTrack >= 0 && mVideoTrack >= 0) {
+                                    mMediaMux.start();
+                                }
+                            }
+                        } while (outIndex >= 0);
+                        long cost = System.currentTimeMillis() - time; //读取这一帧并保存到file中耗费的时间
+                        if (mFpsTime > cost) { //还不到一帧持续的时间
+                            try {
+                                Thread.sleep(mFpsTime - cost);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
