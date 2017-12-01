@@ -75,7 +75,9 @@
         <activity android:name=".mediastudy.voicechange.VoiceChangeActivity" />
         <activity android:name=".mediastudy.hardcode.EasyPlayerActivity" />
         <activity android:name=".mediastudy.hardcode.MediaMuxActivity" />
-        <activity android:name=".mediastudy.hardcode.OpenGLRecordActivity"></activity>
+        <activity android:name=".mediastudy.hardcode.OpenGLRecordActivity" />
+        <activity android:name=".ffmpegstudy.FFmpegIndexActivity" />
+        <activity android:name=".mediastudy.audio.OpenSLActivity"></activity>
     </application>
 
 </manifest>
