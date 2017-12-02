@@ -77,7 +77,8 @@
         <activity android:name=".mediastudy.hardcode.MediaMuxActivity" />
         <activity android:name=".mediastudy.hardcode.OpenGLRecordActivity" />
         <activity android:name=".ffmpegstudy.FFmpegIndexActivity" />
-        <activity android:name=".mediastudy.audio.OpenSLActivity"></activity>
+        <activity android:name=".mediastudy.audio.OpenSLActivity" />
+        <activity android:name=".ffmpegstudy.live.FlowNativeMp4Activity"></activity>
     </application>
 
 </manifest>
