@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import com.lx.multimedialearn.R;
 import com.lx.multimedialearn.bmpstudy.DrawBmpActivity;
 import com.lx.multimedialearn.camerastudy.CameraIndexActivity;
+import com.lx.multimedialearn.ffmpegstudy.FFmpegIndexActivity;
 import com.lx.multimedialearn.mediastudy.MediaIndexActivity;
 import com.lx.multimedialearn.openglstudy.OpenGLIndexActivity;
 import com.lx.multimedialearn.utils.PermissionUtils;
@@ -40,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
         mRecContent.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         list.add(new TabModel("1. 图像处理", "在Android平台绘制一张图片，使用多种不同的API，ImageView，SurfaceView，自定义View，GlSurfaceView，TextureView等", DrawBmpActivity.class));
         list.add(new TabModel("2. Camera使用", "分别使用SurfaceView、TextureView、GLSurfaceView来预览Camera+数据，取到NV21的数据回调,双GLSurfaceView等，并总结Android图形图像架构", CameraIndexActivity.class));
-        list.add(new TabModel("3. 音视频处理", "分别使用SurfaceView、TextureView、GLSurfaceView播放mp4文件", MediaIndexActivity.class));
+        list.add(new TabModel("3. 音视频处理", "播放视频，MediaPlayer，MediaRecord，AudioRecord，AudioTrack，MediaCodec，MediaMux，FMOD，录制音视频，加滤镜，水印等，OpenSL处理音频", MediaIndexActivity.class));
         list.add(new TabModel("4. OpenGl使用", "OpenGL入门，开发空气曲棍球游戏，动态桌面等,Camera+，水印，美颜，滤镜，加载3D模型等", OpenGLIndexActivity.class));
-        list.add(new TabModel("5. OpenCV使用", "OpenGL入门，开发空气曲棍球游戏，动态桌面等,Camera+，水印，美颜，滤镜，加载3D模型等", OpenGLIndexActivity.class));
-        list.add(new TabModel("6. FFmpeg使用", "OpenGL入门，开发空气曲棍球游戏，动态桌面等,Camera+，水印，美颜，滤镜，加载3D模型等", OpenGLIndexActivity.class));
-        list.add(new TabModel("7. WebRtc使用", "OpenGL入门，开发空气曲棍球游戏，动态桌面等,Camera+，水印，美颜，滤镜，加载3D模型等", OpenGLIndexActivity.class));
+        list.add(new TabModel("5. FFmpeg使用", "FFMpeg推流，直播，播放音视频", FFmpegIndexActivity.class));
+        list.add(new TabModel("6. OpenCV使用", "脸部识别入门", OpenGLIndexActivity.class));
+        list.add(new TabModel("7. WebRtc使用", "待", OpenGLIndexActivity.class));
         mRecContent.setAdapter(new MainAdapter(list));
     }
 
