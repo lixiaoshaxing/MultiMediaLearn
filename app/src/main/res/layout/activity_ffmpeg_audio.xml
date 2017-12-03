@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.lx.multimedialearn.ffmpegstudy.player.FFmpegAudioActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FFmpeg解码音频为PCM，使用Audiotrack播放"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/btn_ffmpeg_audio_decode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="音频解码" />
+
+    <Button
+        android:id="@+id/btn_ffmpeg_audio_play"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="播放" />
+
+</LinearLayout>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.lx.multimedialearn.ffmpegstudy.opensl.OpenSLActivity">
+
+    <Button
+        android:id="@+id/btn_open_sl_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="录制"
+        />
+    <Button
+        android:id="@+id/btn_open_sl_stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="停止录制"
+        />
+    <Button
+        android:id="@+id/btn_open_sl_play"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="播放"
+        />
+    <Button
+        android:id="@+id/btn_open_sl_play_stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="停止播放"
+        />
+
+</LinearLayout>
