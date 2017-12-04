@@ -10,20 +10,20 @@
 
 #include <android/native_window_jni.h>
 #include <android/native_window.h>
-#include "inc/libyuv.h"
-#include "inc/ffmpeg/libavutil/time.h"
-#include "inc/libyuv/convert_from.h"
+#include "libyuv.h"
+#include "ffmpeg/libavutil/time.h"
+#include "libyuv/convert_from.h"
 
 
 #include "pthread.h"
 //封装格式
-#include "inc/ffmpeg/libavformat/avformat.h"
+#include "ffmpeg/libavformat/avformat.h"
 //解码
-#include "inc/ffmpeg/libavcodec/avcodec.h"
+#include "ffmpeg/libavcodec/avcodec.h"
 //缩放
-#include "inc/ffmpeg/libswscale/swscale.h"
+#include "ffmpeg/libswscale/swscale.h"
 //重采样
-#include "inc/ffmpeg/libswresample/swresample.h"
+#include "ffmpeg/libswresample/swresample.h"
 
 
 #define LOGI(FORMAT, ...) __android_log_print(ANDROID_LOG_INFO,"sys.out",FORMAT,##__VA_ARGS__);

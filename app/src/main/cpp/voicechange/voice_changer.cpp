@@ -2,7 +2,7 @@
 // Created by 李晓 on 17/7/5.
 //
 #include <jni.h>
-#include "inc/fmod.hpp"
+#include "fmod.hpp"
 #include "stdlib.h"
 #include "unistd.h"
 

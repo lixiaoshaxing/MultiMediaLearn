@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-set(distribution_DIR ${CMAKE_SOURCE_DIR})
+set(distribution_DIR ${CMAKE_SOURCE_DIR}/../../../../distribution)
 
 add_library(ffmpeg_utils SHARED #生成libffmpeg_utils.so
             ffmpeg_play.cpp #ffmpeg转码：解析pcm，播放pcm，解析mp4
@@ -10,7 +10,7 @@ add_library(ffmpeg_utils SHARED #生成libffmpeg_utils.so
             native-live.c #直播
             queue1.c #直播用的队列
             )
-include_directories(src/main/cpp/ffmpeg/inc) #包含所有头文件
+include_directories(${distribution_DIR}/ffmpeg/include) #包含所有头文件
 
 add_library(native-video SHARED native-video.c opensl_io.c)  #opensl
 

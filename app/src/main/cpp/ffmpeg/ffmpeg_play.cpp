@@ -12,16 +12,16 @@
 extern "C"
 {
 //封装格式
-#include "inc/ffmpeg/libavformat/avformat.h"
+#include "ffmpeg/libavformat/avformat.h"
 //解码
-#include "inc/ffmpeg/libavcodec/avcodec.h"
+#include "ffmpeg/libavcodec/avcodec.h"
 //缩放
-#include "inc/ffmpeg/libswscale/swscale.h"
+#include "ffmpeg/libswscale/swscale.h"
 //重采样
-#include "inc/ffmpeg/libswresample/swresample.h"
+#include "ffmpeg/libswresample/swresample.h"
 //
 
-#include "inc/libyuv.h"
+#include "libyuv.h"
 }
 
 #define MAX_AUDIO_FRME_SIZE 48000 * 4

@@ -8,16 +8,16 @@
 
 #include <android/native_window_jni.h> //ndk库
 #include <android/native_window.h>
-#include "inc/libyuv.h"
+#include "libyuv.h"
 #include "pthread.h"
 
 #include "queue1.h" //自有库
 
-#include "inc/x264/include/x264.h"  //第三方库
-#include "inc/faac/include/faac.h"
-#include "inc/faac/include/faaccfg.h"
-#include "inc/libyuv/rotate.h"
-#include "inc/libyuv/convert.h"
+#include "x264/include/x264.h"  //第三方库
+#include "faac/include/faac.h"
+#include "faac/include/faaccfg.h"
+#include "libyuv/rotate.h"
+#include "libyuv/convert.h"
 
 #define LOGI(FORMAT, ...) __android_log_print(ANDROID_LOG_INFO,"sys.out",FORMAT,##__VA_ARGS__);
 #define LOGE(FORMAT, ...) __android_log_print(ANDROID_LOG_ERROR,"sys.out",FORMAT,##__VA_ARGS__);

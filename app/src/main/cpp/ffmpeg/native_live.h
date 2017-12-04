@@ -5,7 +5,7 @@
 #ifndef FFMPEGTEST_NATIVE_LIVE_H
 #define FFMPEGTEST_NATIVE_LIVE_H
 
-#include "inc/rtmpdump/include/rtmp.h"
+#include "rtmpdump/include/rtmp.h"
 
 void add_rtmp_packet(RTMPPacket *packet);
 void add_264_sequence_header(unsigned char *pps, unsigned char *sps, int pps_len, int sps_len);

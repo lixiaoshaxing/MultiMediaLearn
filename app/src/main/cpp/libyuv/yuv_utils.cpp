@@ -2,8 +2,7 @@
 // Created by 李晓 on 17/11/30.
 //
 #include <jni.h>
-#include "inc/libyuv.h"
-#include "inc/libyuv/convert_argb.h"
+#include "libyuv.h"
 
 extern "C"
 JNIEXPORT void JNICALL
