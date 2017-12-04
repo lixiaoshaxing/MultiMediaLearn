@@ -11,3 +11,4 @@ add_subdirectory(${lib_src_DIR}/multimedia ${lib_build_DIR}/multimedia) #音视�
 add_subdirectory(${lib_src_DIR}/voicechange ${lib_build_DIR}/voicechange) #fmod，音频处理
 add_subdirectory(${lib_src_DIR}/libyuv ${lib_build_DIR}/libyuv) #yuv处理，图像处理
 add_subdirectory(${lib_src_DIR}/ffmpeg ${lib_build_DIR}/ffmpeg) #ffmpeg库，音视频
+add_subdirectory(${lib_src_DIR}/opencv ${lib_build_DIR}/opencv) #OpenCV,图像识别

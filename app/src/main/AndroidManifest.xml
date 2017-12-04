@@ -82,7 +82,8 @@
         <activity android:name=".ffmpegstudy.live.LiveActivity" />
         <activity android:name=".ffmpegstudy.player.FFmpegAudioActivity" />
         <activity android:name=".ffmpegstudy.player.FFmpegVideoActivity" />
-        <activity android:name=".ffmpegstudy.opensl.OpenSLActivity"></activity>
+        <activity android:name=".ffmpegstudy.opensl.OpenSLActivity" />
+        <activity android:name=".opencvstudy.OpenCVActivity"></activity>
     </application>
 
 </manifest>
