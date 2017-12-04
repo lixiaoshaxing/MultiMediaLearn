@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         list.add(new TabModel("3. 音视频处理", "播放视频，MediaPlayer，MediaRecord，AudioRecord，AudioTrack，MediaCodec，MediaMux，FMOD，录制音视频，加滤镜，水印等，OpenSL处理音频", MediaIndexActivity.class));
         list.add(new TabModel("4. OpenGl使用", "OpenGL入门，开发空气曲棍球游戏，动态桌面等,Camera+，水印，美颜，滤镜，加载3D模型等", OpenGLIndexActivity.class));
         list.add(new TabModel("5. FFmpeg使用", "FFMpeg推流，直播，播放音视频", FFmpegIndexActivity.class));
-        list.add(new TabModel("6. OpenCV使用", "脸部识别入门", OpenCVActivity.class));
+        list.add(new TabModel("6. OpenCV使用", "边框识别并剪裁", OpenCVActivity.class));
         list.add(new TabModel("7. WebRtc使用", "待", OpenGLIndexActivity.class));
         mRecContent.setAdapter(new MainAdapter(list));
     }

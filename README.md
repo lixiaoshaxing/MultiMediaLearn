@@ -2,16 +2,22 @@
 多媒体学习：图片处理，音视频处理，相机使用，OpenGL，OpenSL，OpenCV，FFMpeg等学习，所有代码都不封装，一般由一个类完成功能，方便学习。
 + 图片处理
     - 1.SurfaceView，GLSurfaceView,TextureView，ImageView，自定义View渲染Bitmap
-    - 2.Bitmap压缩，剪裁，滤镜处理(待)
+    - 2.Bitmap压缩，剪裁，Renderscript滤镜处理(待)
 + 相机使用
     - 1.SurfaceView，GLSurfaceView，TextureView预览Camera，拍照
     - 2.SurfaceView，GLsurfaceView，TextureView同时预览Camera，共享数据
     - 3.多GLSurfaceView共享Camera，模仿小米系统相机九个滤镜同时预览
 + 音视频处理
-    - 1.MediaPlayer结合SurfaceView，GLSurfaceView，TextureView进行视频同步播放
-    - 2.AudioRecoder，MediaCodec，MediaMuxer，Camera录制视频（待）
-    - 3.录制视频，OpenGL，增加滤镜，水印，剪裁（待）
-    - 4.录制视频，FFmpeg，增加滤镜，水印，剪裁（待）
+    - 1.MediaPlayer结合SurfaceView，GLSurfaceView，TextureView播放视频
+    - 2.MediaPlayer，MediaRecord录制视频
+    - 3.AudioRecord，AudioTrack录制音频，播放音频
+    - 4.Fmod处理音频，变声
+    - 5.MediaExtractor，MediaCodec提取音频，播放音频，结合MediaMux添加背景音乐
+    - 6.AudioRecoder，Camera，MediaCodec单独录制音频，视频
+    - 7.AudioRecoder，Camera，MediaCodec，AudioMux录制视频
+    - 8.录制视频，使用OpenGL处理，添加滤镜，水印
+    - 9.视频添加背景音乐，转gif，断点录制（待）
+    - 10.录制视频，使用FFmpeg增加滤镜，水印，剪裁（待）
 + OpenGL学习
     - 1.冰球游戏，基本图形绘制，基本矩阵变换，触控
     - 2.粒子喷泉，烟火系统，天空盒，动态壁纸，陀螺仪，高度图等
@@ -21,3 +27,13 @@
     - 6.加载STL模型，渲染3D模型
     - 7.加载OBJ模型
     - 8.加载OBJ-MTL模型，包含模型，纹理
+    - 9.编译assimp，加载模型（待）
+    - 10.加载骨架（待）
++ FFMpeg学习
+    - 1.本地视频推流，使用libRtmp，ffmpeg解码，libYuv转向
+    - 2.直播，采集音频，视频，使用x264，faac编码，librtmp推流，libYuv转向
+    - 3.解析音频为pcm，ffmpeg解码，本地方法调用java层AudioTrack播放音频
+    - 4.FFMpeg解码本地视频，使用队列，保持音视频同步播放
+    - 5.OpenSL录制音频，解码音频，播放音频
++ OpenCV入门
+    - 1. 使用OpenCV进行边框识别，并剪裁Bitmap
